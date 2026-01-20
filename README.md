@@ -113,30 +113,6 @@ This ensures:
 * Safe concurrent requests
 * Consistent data even under load
 
----
-
-## 📂 Project Structure
-
-```
-multi-tenant-appointment-saas/
-│
-├── app/
-│   ├── __init__.py
-│   ├── config.py
-│   ├── models/
-│   └── routes/
-│
-├── database/
-│   ├── schema.sql
-│   ├── constraints.sql
-│   └── indexes.sql
-│
-├── migrations/
-├── SYSTEM_DESIGN.md
-├── requirements.txt
-├── run.py
-└── README.md
-```
 
 ---
 
