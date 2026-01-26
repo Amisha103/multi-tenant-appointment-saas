@@ -6,10 +6,16 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    
     db.init_app(app)
     migrate.init_app(app, db)
+    from app import models
 
-    from app.routes.health import health_bp
-    app.register_blueprint(health_bp)
+    
+    
+    from app.routes.landing_routes import landing_bp
+
+    
+    app.register_blueprint(landing_bp)
 
     return app

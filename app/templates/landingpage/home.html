@@ -1,0 +1,51 @@
+{% extends "landingpage/base.html" %}
+
+{% block content %}
+<section class="business-section">
+    <h2>Businesses Near You</h2>
+    <p>Book appointments with trusted businesses in just a few clicks.</p>
+
+    <div class="business-grid">
+
+        <!-- Hospital -->
+        <a href="#" class="business-card" aria-label="View City Care Hospital">
+            <img 
+                src="{{ url_for('static', filename='images/hospital.jpg') }}" 
+                alt="City Care Hospital building">
+            <div class="business-card-content">
+                <span>Healthcare</span>
+                <h3>City Care Hospital</h3>
+                <p>Multi-specialty hospital providing reliable, round-the-clock healthcare services.</p>
+                <div class="cta">View Business</div>
+            </div>
+        </a>
+
+        <!-- Salon -->
+        <a href="#" class="business-card" aria-label="View Glow & Grace Salon">
+            <img 
+                src="{{ url_for('static', filename='images/salon.jpg') }}" 
+                alt="Glow & Grace beauty salon interior">
+            <div class="business-card-content">
+                <span>Salon</span>
+                <h3>Glow & Grace Salon</h3>
+                <p>Premium hair, skin, and beauty services by experienced professionals.</p>
+                <div class="cta">View Business</div>
+            </div>
+        </a>
+
+        <!-- Gym -->
+        <a href="#" class="business-card" aria-label="View Iron Pulse Gym">
+            <img 
+                src="{{ url_for('static', filename='images/gym.jpg') }}" 
+                alt="Iron Pulse Gym fitness center">
+            <div class="business-card-content">
+                <span>Fitness</span>
+                <h3>Iron Pulse Gym</h3>
+                <p>Fully equipped gym with personal training and modern fitness programs.</p>
+                <div class="cta">View Business</div>
+            </div>
+        </a>
+
+    </div>
+</section>
+{% endblock %}

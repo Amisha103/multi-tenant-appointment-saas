@@ -1,0 +1,56 @@
+{% extends "landingpage/base.html" %}
+
+{% block content %}
+<section class="form-section">
+    <h2>Register Your Business</h2>
+    <p>Join our platform and start accepting appointments online.</p>
+
+    <form class="business-form" method="POST" action="{{ url_for('landing.register_business') }}">
+
+        <div class="form-group">
+            <label for="business_name">Business Name</label>
+            <input type="text" id="business_name" name="business_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="owner_name">Owner Name</label>
+            <input type="text" id="owner_name" name="owner_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Business Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Contact Number</label>
+            <input type="text" id="phone" name="phone" required>
+        </div>
+
+        <div class="form-group">
+            <label for="gst_number">GST Number</label>
+            <input type="text" id="gst_number" name="gst_number" required>
+            <small class="hint">GST number must be valid and registered.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Business Address</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Business Category</label>
+            <select id="category" name="category" required>
+                <option value="">Select category</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="salon">Salon</option>
+                <option value="fitness">Fitness</option>
+                <option value="education">Education</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-primary">Register Business</button>
+    </form>
+</section>
+{% endblock %}
