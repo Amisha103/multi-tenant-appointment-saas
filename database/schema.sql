@@ -1,6 +1,0 @@
--- tenants
--- users
--- services
--- staff
--- availability
--- appointments
