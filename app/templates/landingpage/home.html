@@ -9,7 +9,7 @@
     <div class="business-grid">
 
         {% for business in businesses %}
-        <a href="#" class="business-card">
+        <a href="{{ url_for('business.business_home', slug=business.slug) }}" class="business-card">
 
             <img 
                 src="{{ url_for('static', filename='images/categories/' ~ business.category ~ '.jpg') }}"
