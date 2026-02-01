@@ -11,10 +11,8 @@ class Business(db.Model):
     slug = db.Column(db.String(160), unique=True, nullable=False)
 
     owner_name = db.Column(db.String(120), nullable=False)
-
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(20), nullable=False)
-
     gst_number = db.Column(db.String(15), unique=True, nullable=False)
 
     category = db.Column(db.String(50), nullable=False)
@@ -30,6 +28,18 @@ class Business(db.Model):
         db.DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow
+    )
+
+    
+    services = db.relationship(
+        "Service",
+        back_populates="business",
+        cascade="all, delete-orphan"
+    )
+    images = db.relationship(
+        "BusinessImage",
+        back_populates="business",
+        cascade="all, delete-orphan"
     )
 
     def __init__(self, **kwargs):

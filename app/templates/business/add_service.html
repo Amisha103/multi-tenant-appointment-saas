@@ -1,0 +1,20 @@
+{% extends "business/base.html" %}
+
+{% block content %}
+<section class="add-service">
+    <h2>Add New Service for {{ business.name }}</h2>
+
+    <form method="POST">
+        <label for="name">Service Name:</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="price">Price (₹):</label>
+        <input type="number" name="price" id="price" required>
+
+        <button type="submit">Add Service</button>
+    </form>
+
+    <a href="{{ url_for('business.business_home', business_id=business.id) }}">Back to Business Home</a>
+</section>
+{% endblock %}
+

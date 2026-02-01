@@ -14,8 +14,10 @@ def create_app():
     
     
     from app.routes.landing_routes import landing_bp
+    from app.routes.business_routes import business_bp
 
     
     app.register_blueprint(landing_bp)
+    app.register_blueprint(business_bp, url_prefix='/business')
 
     return app

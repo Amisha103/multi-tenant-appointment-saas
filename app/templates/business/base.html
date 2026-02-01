@@ -1,0 +1,41 @@
+{% extends "business/base.html" %}
+
+{% block content %}
+<section class="business-home">
+    <h2>{{ business.name }}</h2>
+    <p>{{ business.address }}</p>
+    <p>Category: {{ business.category | capitalize }}</p>
+
+    <hr>
+
+    {% if images %}
+    <div class="business-images">
+        {% for img in images %}
+            <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" alt="{{ business.name }} image">
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if services %}
+    <div class="business-services">
+        <h3>Services Offered:</h3>
+        <ul>
+            {% for service in services %}
+                <li>{{ service.name }} - ₹{{ service.price }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+        <p>No services listed yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <div class="login-options">
+        <h3>Login</h3>
+        <a href="{{ url_for('business.admin_login', business_id=business.id) }}">Administrator</a> |
+        <a href="{{ url_for('business.staff_login', business_id=business.id) }}">Staff</a> |
+        <a href="{{ url_for('business.user_login', business_id=business.id) }}">User</a>
+    </div>
+</section>
+{% endblock %}
