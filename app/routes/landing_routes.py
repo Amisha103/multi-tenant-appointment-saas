@@ -10,7 +10,11 @@ landing_bp = Blueprint(
 
 @landing_bp.route("/")
 def home():
-    return render_template("landingpage/home.html")
+    businesses = Business.query.filter_by(is_active=True).all()
+    return render_template(
+        "landingpage/home.html",
+        businesses=businesses
+    )
 
 
 @landing_bp.route("/register-business", methods=["GET", "POST"])
