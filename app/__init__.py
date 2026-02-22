@@ -1,6 +1,7 @@
 from flask import Flask
 from app.config import Config
 from app.extensions import db, migrate
+from app.middlewares.tenant_middleware import load_current_business
 
 def create_app():
     app = Flask(__name__)
@@ -19,5 +20,6 @@ def create_app():
     
     app.register_blueprint(landing_bp)
     app.register_blueprint(business_bp, url_prefix='/business')
+    app.before_request(load_current_business)
 
     return app
