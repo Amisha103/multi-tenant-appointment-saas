@@ -33,9 +33,9 @@
 
     <div class="login-options">
         <h3>Login</h3>
-        <a href="{{ url_for('business.admin_login', business_id=business.id) }}">Administrator</a> |
-        <a href="{{ url_for('business.staff_login', business_id=business.id) }}">Staff</a> |
-        <a href="{{ url_for('business.user_login', business_id=business.id) }}">User</a>
+        <a href="{{ url_for('business.admin_login', slug=business.slug) }}">Administrator</a> |
+        <a href="{{ url_for('business.staff_login', slug=business.slug) }}">Staff</a> |
+        <a href="{{ url_for('business.user_login', slug=business.slug) }}">User</a>
     </div>
 </section>
 {% endblock %}
