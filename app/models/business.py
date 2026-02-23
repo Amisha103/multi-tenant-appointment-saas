@@ -41,6 +41,11 @@ class Business(db.Model):
         back_populates="business",
         cascade="all, delete-orphan"
     )
+    users = db.relationship(
+    "BusinessUser",
+    back_populates="business",
+    cascade="all, delete-orphan"
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -49,3 +54,5 @@ class Business(db.Model):
 
     def __repr__(self):
         return f"<Business {self.name}>"
+
+
