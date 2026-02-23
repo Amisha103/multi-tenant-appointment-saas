@@ -1,9 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
+from app.extensions import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-
-db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -18,16 +16,15 @@ class User(UserMixin, db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationship (user can belong to many businesses)
-    businesses = db.relationship("BusinessUser", back_populates="user", cascade="all, delete-orphan")
+    # Relationship with BusinessUser
+    businesses = db.relationship(
+        "BusinessUser",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
-    # Password setter
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    # Password checker
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-    def __repr__(self):
-        return f"<User {self.email}>"
