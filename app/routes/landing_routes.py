@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.extensions import db
 from app.models.business import Business
-
+from app.models.user import User
+from app.models.business_user import BusinessUser
+from werkzeug.security import generate_password_hash
 landing_bp = Blueprint(
     "landing",
     __name__,
@@ -28,37 +30,72 @@ def register_business():
         address = request.form.get("address")
         category = request.form.get("category")
 
-       
+        # Optional (temporary password for now)
+        password = "temporary123"
+
+        # 🔎 Check existing GST
         existing_gst = Business.query.filter_by(gst_number=gst_number).first()
         if existing_gst:
             flash("GST number already registered.", "error")
             return redirect(url_for("landing.register_business"))
 
-       
-        existing_email = Business.query.filter_by(email=email).first()
-        if existing_email:
-            flash("Email already registered.", "error")
+        # 🔎 Check existing business email
+        existing_business_email = Business.query.filter_by(email=email).first()
+        if existing_business_email:
+            flash("Business email already registered.", "error")
             return redirect(url_for("landing.register_business"))
 
-        new_business = Business(
-            name=name,
-            owner_name=owner_name,
-            email=email,
-            phone=phone,
-            gst_number=gst_number,
-            category=category,
-            address=address
-        )
+        # 🔎 Check if user already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash("User with this email already exists.", "error")
+            return redirect(url_for("landing.register_business"))
 
-        db.session.add(new_business)
-        db.session.commit()
+        try:
+            # ✅ STEP 1 — Create Business
+            new_business = Business(
+                name=name,
+                owner_name=owner_name,
+                email=email,
+                phone=phone,
+                gst_number=gst_number,
+                category=category,
+                address=address
+            )
 
-        flash("Business registered successfully! Await verification.", "success")
-        return redirect(url_for("landing.home"))
+            db.session.add(new_business)
+            db.session.commit()
+
+            # ✅ STEP 2 — Create Owner User
+            owner_user = User(
+                name=owner_name,
+                email=email,
+                password=generate_password_hash(password)
+            )
+
+            db.session.add(owner_user)
+            db.session.commit()
+
+            # ✅ STEP 3 — Link Owner As Admin
+            business_user = BusinessUser(
+                user_id=owner_user.id,
+                business_id=new_business.id,
+                role="admin"
+            )
+
+            db.session.add(business_user)
+            db.session.commit()
+
+            flash("Business registered successfully! Owner account created.", "success")
+            return redirect(url_for("landing.home"))
+
+        except Exception as e:
+            db.session.rollback()
+            flash("Something went wrong. Please try again.", "error")
+            print(e)
+            return redirect(url_for("landing.register_business"))
 
     return render_template("landingpage/register_business.html")
-
-
 
 @landing_bp.route("/services")
 def services():
