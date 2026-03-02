@@ -2,40 +2,56 @@
 
 {% block content %}
 <section class="business-home">
+
+    <!-- Top Right Option -->
+    <div class="top-auth">
+        <a href="{{ url_for('business.user_register', slug=business.slug) }}">
+            Not a user? Register
+        </a>
+    </div>
+
     <h2>{{ business.name }}</h2>
     <p>{{ business.address }}</p>
     <p>Category: {{ business.category | capitalize }}</p>
 
     <hr>
 
+    <!-- 1️⃣ IMAGES FIRST -->
     {% if images %}
     <div class="business-images">
         {% for img in images %}
-            <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" alt="{{ business.name }} image">
+            <img src="{{ url_for('static', filename='uploads/' ~ business.slug ~ '/' ~ img) }}" 
+                 alt="{{ business.name }} image">
         {% endfor %}
     </div>
     {% endif %}
 
+    <hr>
+
+    <!-- 2️⃣ SERVICES -->
     {% if services %}
     <div class="business-services">
         <h3>Services Offered:</h3>
         <ul>
             {% for service in services %}
-                <li>{{ service.name }} - ₹{{ service.price }}</li>
+                <li>
+                    {{ service.name }} - ₹{{ service.price }}
+                </li>
             {% endfor %}
         </ul>
     </div>
+
+    <!-- 3️⃣ BOOK APPOINTMENT BUTTON -->
+    <div class="book-btn">
+        <a href="{{ url_for('business.book_appointment', slug=business.slug) }}" 
+           class="btn-book">
+           Book Appointment
+        </a>
+    </div>
+
     {% else %}
         <p>No services listed yet.</p>
     {% endif %}
 
-    <hr>
-
-    <div class="login-options">
-        <h3>Login</h3>
-        <a href="{{ url_for('business.admin_login', slug=business.slug) }}">Administrator</a> |
-        <a href="{{ url_for('business.staff_login', slug=business.slug) }}">Staff</a> |
-        <a href="{{ url_for('business.user_login', slug=business.slug) }}">User</a>
-    </div>
 </section>
 {% endblock %}

@@ -1,6 +1,5 @@
 {% extends "landingpage/base.html" %}
 
-
 {% block content %}
 <section class="business-section">
     <h2>Businesses Near You</h2>
@@ -9,22 +8,36 @@
     <div class="business-grid">
 
         {% for business in businesses %}
-        <a href="{{ url_for('business.business_home', slug=business.slug) }}" class="business-card">
+        <a href="{{ url_for('business.business_home', slug=business.slug) }}" 
+           class="business-card">
 
-            <img 
-                src="{{ url_for('static', filename='images/categories/' ~ business.category ~ '.jpg') }}"
-                onerror="this.src='{{ url_for('static', filename='images/categories/default.jpg') }}'"
-                alt="{{ business.name }}"
-            >
+            {% if category_images[business.id] %}
+                <img 
+                    src="{{ url_for('static', 
+                        filename='images/' ~ business.category ~ '/' ~ category_images[business.id][0]) }}"
+                    alt="{{ business.name }}">
+            {% else %}
+                <img 
+                    src="{{ url_for('static', filename='images/default.jpg') }}"
+                    alt="{{ business.name }}">
+            {% endif %}
 
             <div class="business-card-content">
-                <span>{{ business.category | capitalize }}</span>
+                <span class="category-label">
+                    {{ business.category | capitalize }}
+                </span>
+
                 <h3>{{ business.name }}</h3>
-                <p>{{ business.address[:80] }}...</p>
+
+                <p>
+                    {{ business.address[:80] }}{% if business.address|length > 80 %}...{% endif %}
+                </p>
+
                 <span class="cta">View Details</span>
             </div>
 
         </a>
+
         {% else %}
         <p style="text-align:center;">No businesses registered yet.</p>
         {% endfor %}
