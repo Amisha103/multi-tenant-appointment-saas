@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+
+<div class="admin-container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>{{ business.name }}</h2>
+
+        <a href="#">Dashboard</a>
+        <a href="#">Services</a>
+        <a href="#">Staff</a>
+        <a href="#">Appointments</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>
