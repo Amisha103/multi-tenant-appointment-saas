@@ -41,8 +41,8 @@ def business_home(slug):
         images=image_files
     )
 
-@business_bp.route("/<slug>/admin/dashboard")
-def admin_dashboard(slug):
+@business_bp.route("/<slug>/admin/login")
+def admin_login(slug):
     business = g.current_business
     return render_template("business/admin/admin_dashboard.html", business=business)
 
