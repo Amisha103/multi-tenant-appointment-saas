@@ -11,16 +11,11 @@
         <a href="{{ url_for('business.business_home', slug=business.slug) }}" 
            class="business-card">
 
-            {% if category_images[business.id] %}
-                <img 
-                    src="{{ url_for('static', 
-                        filename='images/' ~ business.category ~ '/' ~ category_images[business.id][0]) }}"
-                    alt="{{ business.name }}">
-            {% else %}
-                <img 
-                    src="{{ url_for('static', filename='images/default.jpg') }}"
-                    alt="{{ business.name }}">
-            {% endif %}
+            <!-- CATEGORY IMAGE -->
+            <img 
+                src="{{ url_for('static', filename='images/categories/' ~ business.category ~ '.jpg') }}"
+                onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/categories/default.jpg') }}';"
+                alt="{{ business.name }}">
 
             <div class="business-card-content">
                 <span class="category-label">

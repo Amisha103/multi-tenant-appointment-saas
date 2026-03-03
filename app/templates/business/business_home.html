@@ -3,11 +3,11 @@
 {% block content %}
 <section class="business-home">
 
-    <!-- Top Right Option -->
+   
     <div class="top-auth">
-        <a href="{{ url_for('business.user_register', slug=business.slug) }}">
-            Not a user? Register
-        </a>
+      <a href="{{ url_for('business.user_login', slug=business.slug) }}">
+    User Login
+</a>
     </div>
 
     <h2>{{ business.name }}</h2>
@@ -16,7 +16,7 @@
 
     <hr>
 
-    <!-- 1️⃣ IMAGES FIRST -->
+    
     {% if images %}
     <div class="business-images">
         {% for img in images %}
@@ -28,7 +28,6 @@
 
     <hr>
 
-    <!-- 2️⃣ SERVICES -->
     {% if services %}
     <div class="business-services">
         <h3>Services Offered:</h3>
@@ -41,7 +40,7 @@
         </ul>
     </div>
 
-    <!-- 3️⃣ BOOK APPOINTMENT BUTTON -->
+  
     <div class="book-btn">
         <a href="{{ url_for('business.book_appointment', slug=business.slug) }}" 
            class="btn-book">

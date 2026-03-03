@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, g
+from flask import Blueprint, render_template, g, current_app
 from app.models.business import Business
 from app.models.service import Service
-from app.models.business_image import BusinessImage
+import os
 
 business_bp = Blueprint(
     "business",
@@ -9,13 +9,23 @@ business_bp = Blueprint(
     template_folder="../templates/business",
     url_prefix="/business"
 )
-
 @business_bp.route("/<slug>")
 def business_home(slug):
     business = g.current_business
 
     services = Service.query.filter_by(business_id=business.id).all()
-    images = BusinessImage.query.filter_by(business_id=business.id).all()
+
+   
+    folder_path = os.path.join(
+        current_app.static_folder,
+        "images",
+        business.category
+    )
+
+    images = []
+
+    if os.path.exists(folder_path):
+        images = os.listdir(folder_path)
 
     return render_template(
         "business_home.html",
@@ -23,7 +33,6 @@ def business_home(slug):
         services=services,
         images=images
     )
-
 
 @business_bp.route("/<slug>/admin/login", methods=["GET", "POST"])
 def admin_login(slug):
