@@ -3,28 +3,36 @@
 {% block content %}
 <section class="business-home">
 
-   
-    <div class="top-auth">
-      <a href="{{ url_for('business.user_login', slug=business.slug) }}">
-    User Login
-</a>
-    </div>
+   <div class="business-header">
+    <h1 class="business-title">{{ business.name }}</h1>
 
-    <h2>{{ business.name }}</h2>
+    <div class="auth-buttons">
+         <a href="{{ url_for('business.admin_login', slug=business.slug) }}" class="admin-btn">
+            User
+        </a>
+        <a href="{{ url_for('business.admin_login', slug=business.slug) }}" class="admin-btn">
+            Admin
+        </a>
+        <a href="{{ url_for('business.staff_login', slug=business.slug) }}" class="staff-btn">
+            Staff
+        </a>
+    </div>
+</div>
+    <div class="top-auth">
+ 
+
+   
     <p>{{ business.address }}</p>
     <p>Category: {{ business.category | capitalize }}</p>
 
     <hr>
 
     
-    {% if images %}
-    <div class="business-images">
-        {% for img in images %}
-            <img src="{{ url_for('static', filename='uploads/' ~ business.slug ~ '/' ~ img) }}" 
-                 alt="{{ business.name }} image">
-        {% endfor %}
-    </div>
-    {% endif %}
+ <div class="business-gallery">
+    {% for image in images %}
+        <img src="{{ url_for('static', filename=image) }}" class="business-img">
+    {% endfor %}
+</div>
 
     <hr>
 

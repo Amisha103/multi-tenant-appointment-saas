@@ -15,23 +15,30 @@ def business_home(slug):
 
     services = Service.query.filter_by(business_id=business.id).all()
 
-   
-    folder_path = os.path.join(
-        current_app.static_folder,
+    # Get business category
+    category = business.category.lower()
+
+    # Build folder path
+    image_folder = os.path.join(
+        current_app.root_path,
+        "static",
         "images",
-        business.category
+        "business",
+        category
     )
 
-    images = []
+    image_files = []
 
-    if os.path.exists(folder_path):
-        images = os.listdir(folder_path)
+    if os.path.exists(image_folder):
+        for file in os.listdir(image_folder):
+            if file.endswith((".jpg", ".jpeg", ".png", ".webp")):
+                image_files.append(f"images/business/{category}/{file}")
 
     return render_template(
         "business_home.html",
         business=business,
         services=services,
-        images=images
+        images=image_files
     )
 
 @business_bp.route("/<slug>/admin/login", methods=["GET", "POST"])
