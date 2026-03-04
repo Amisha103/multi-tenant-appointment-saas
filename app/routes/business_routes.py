@@ -14,6 +14,7 @@ from app.models.business import Business
 from app.models.service import Service
 from app.models.user import User
 from app.models.business_user import BusinessUser
+from app.extensions import db
 import os
 
 
@@ -115,18 +116,58 @@ def staff_login(slug):
         business=business
     )
 
-
 # -----------------------------
 # USER LOGIN
 # -----------------------------
 @business_bp.route("/<slug>/user/login", methods=["GET", "POST"])
 def user_login(slug):
     business = g.current_business
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.check_password(password):
+
+            # Check if user linked to this business
+            business_user = BusinessUser.query.filter_by(
+                user_id=user.id,
+                business_id=business.id
+            ).first()
+
+            # If not linked → auto link
+            if not business_user:
+                business_user = BusinessUser(
+                    user_id=user.id,
+                    business_id=business.id,
+                    role="customer"
+                )
+                db.session.add(business_user)
+                db.session.commit()
+
+            login_user(user)
+
+            return redirect(
+                url_for("business.user_dashboard", slug=slug)
+            )
+
+        flash("Invalid email or password", "error")
+
     return render_template(
-        "business/user_login.html",
+        "user/user_login.html",
         business=business
     )
+@business_bp.route("/<slug>/user/dashboard")
+@login_required
+def user_dashboard(slug):
+    business = g.current_business
 
+    return render_template(
+        "user/user_dashboard.html",
+        business=business
+    )
 
 # -----------------------------
 # LOAD BUSINESS FROM SLUG
@@ -160,5 +201,53 @@ def admin_dashboard(slug):
 
     return render_template(
         "business/admin/admin_dashboard.html",
+        business=business
+    )
+# -----------------------------
+# USER REGISTER
+# -----------------------------
+@business_bp.route("/<slug>/user/register", methods=["GET", "POST"])
+def user_register(slug):
+    business = g.current_business
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        existing_user = User.query.filter_by(email=email).first()
+
+        if existing_user:
+            flash("Email already registered. Please login.", "error")
+            return redirect(url_for("business.user_login", slug=slug))
+
+        # Create new user
+        new_user = User(
+            name=name,
+            email=email
+        )
+        new_user.set_password(password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        # Link user to business as customer
+        business_user = BusinessUser(
+            user_id=new_user.id,
+            business_id=business.id,
+            role="customer"
+        )
+
+        db.session.add(business_user)
+        db.session.commit()
+
+        login_user(new_user)
+
+        return redirect(
+            url_for("business.user_dashboard", slug=slug)
+        )
+
+    return render_template(
+        "user/user_register.html",
         business=business
     )

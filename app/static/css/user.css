@@ -1,0 +1,87 @@
+/* ===== Global Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== Card Container ===== */
+.auth-container {
+    background: #ffffff;
+    width: 380px;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* ===== Heading ===== */
+.auth-container h2 {
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* ===== Input Fields ===== */
+.auth-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    transition: 0.3s ease;
+    font-size: 14px;
+}
+
+.auth-container input:focus {
+    border-color: #667eea;
+    outline: none;
+}
+
+/* ===== Button ===== */
+.auth-container button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #667eea;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.auth-container button:hover {
+    background: #5a67d8;
+}
+
+/* ===== Links ===== */
+.auth-container a {
+    display: block;
+    margin-top: 15px;
+    text-decoration: none;
+    color: #667eea;
+    font-size: 14px;
+}
+
+.auth-container a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Flash Messages ===== */
+.flash-message {
+    background: #ffe5e5;
+    color: #d8000c;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
