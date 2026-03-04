@@ -5,22 +5,34 @@
 
    <div class="business-header">
     <h1 class="business-title">{{ business.name }}</h1>
-
-    <div class="auth-buttons">
-         <a href="{{ url_for('business.admin_login', slug=business.slug) }}" class="admin-btn">
-            User
-        </a>
-        <a href="{{ url_for('business.admin_login', slug=business.slug) }}" class="admin-btn">
-            Admin
-        </a>
-        <a href="{{ url_for('business.staff_login', slug=business.slug) }}" class="staff-btn">
-            Staff
-        </a>
-    </div>
+<div class="auth-buttons">
+    <button class="admin-btn" onclick="openRoleModal()">
+        Login
+    </button>
+</div>
 </div>
     <div class="top-auth">
  
+<!-- Role Selection Modal -->
+<div id="roleModal" class="role-modal">
+    <div class="role-modal-content">
+        <h3>Select Your Role</h3>
 
+        <a href="{{ url_for('business.user_login', slug=business.slug) }}" class="role-btn">
+            User
+        </a>
+
+        <a href="{{ url_for('business.staff_login', slug=business.slug) }}" class="role-btn">
+            Staff
+        </a>
+
+        <a href="{{ url_for('business.admin_login', slug=business.slug) }}" class="role-btn">
+            Admin
+        </a>
+
+        <button onclick="closeRoleModal()" class="close-btn">Cancel</button>
+    </div>
+</div>
    
     <p>{{ business.address }}</p>
     <p>Category: {{ business.category | capitalize }}</p>
@@ -61,4 +73,14 @@
     {% endif %}
 
 </section>
+
+<script>
+function openRoleModal() {
+    document.getElementById("roleModal").style.display = "flex";
+}
+
+function closeRoleModal() {
+    document.getElementById("roleModal").style.display = "none";
+}
+</script>
 {% endblock %}
