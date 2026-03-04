@@ -36,11 +36,7 @@ class Business(db.Model):
         back_populates="business",
         cascade="all, delete-orphan"
     )
-    images = db.relationship(
-        "BusinessImage",
-        back_populates="business",
-        cascade="all, delete-orphan"
-    )
+  
     users = db.relationship(
     "BusinessUser",
     back_populates="business",
