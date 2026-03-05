@@ -302,10 +302,12 @@ def admin_dashboard(slug):
 # -----------------------------
 # LOGOUT
 # -----------------------------
-@business_bp.route("/logout")
-def logout():
+@business_bp.route("/<slug>/logout")
+def logout(slug):
 
-    response = make_response(redirect("/"))
+    response = make_response(
+        redirect(url_for("business.business_home", slug=slug))
+    )
 
     unset_jwt_cookies(response)
 
