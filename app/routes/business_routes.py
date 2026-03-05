@@ -7,14 +7,25 @@ from flask import (
     flash,
     render_template,
     g,
-    abort
+    abort,
+    make_response
 )
-from flask_login import login_user, login_required, current_user
+
+from flask_jwt_extended import (
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+    get_jwt,
+    unset_jwt_cookies,
+    set_access_cookies
+)
+
 from app.models.business import Business
 from app.models.service import Service
 from app.models.user import User
 from app.models.business_user import BusinessUser
 from app.extensions import db
+
 import os
 
 
@@ -31,6 +42,7 @@ business_bp = Blueprint(
 # -----------------------------
 @business_bp.route("/<slug>")
 def business_home(slug):
+
     business = g.current_business
 
     services = Service.query.filter_by(
@@ -69,9 +81,11 @@ def business_home(slug):
 # -----------------------------
 @business_bp.route("/<slug>/admin/login", methods=["GET", "POST"])
 def admin_login(slug):
+
     business = g.current_business
 
     if request.method == "POST":
+
         email = request.form.get("email")
         password = request.form.get("password")
 
@@ -86,19 +100,25 @@ def admin_login(slug):
             ).first()
 
             if business_user:
-                login_user(user)
-                return redirect(
-                    url_for("business.admin_dashboard", slug=slug)
+
+                access_token = create_access_token(
+                    identity=str(user.id),
+                    additional_claims={
+                        "business_id": business.id,
+                        "role": "admin"
+                    }
                 )
 
-        flash(
-            "Invalid credentials or unauthorized access",
-            "error"
-        )
+                response = make_response(
+                    redirect(url_for("business.admin_dashboard", slug=slug))
+                )
 
-    # ✅ This handles BOTH:
-    # - GET request
-    # - Failed POST request
+                set_access_cookies(response, access_token)
+
+                return response
+
+        flash("Invalid credentials or unauthorized access", "error")
+
     return render_template(
         "business/admin/admin_login.html",
         business=business
@@ -110,20 +130,25 @@ def admin_login(slug):
 # -----------------------------
 @business_bp.route("/<slug>/staff/login", methods=["GET", "POST"])
 def staff_login(slug):
+
     business = g.current_business
+
     return render_template(
         "business/staff_login.html",
         business=business
     )
+
 
 # -----------------------------
 # USER LOGIN
 # -----------------------------
 @business_bp.route("/<slug>/user/login", methods=["GET", "POST"])
 def user_login(slug):
+
     business = g.current_business
 
     if request.method == "POST":
+
         email = request.form.get("email")
         password = request.form.get("password")
 
@@ -131,13 +156,11 @@ def user_login(slug):
 
         if user and user.check_password(password):
 
-            # Check if user linked to this business
             business_user = BusinessUser.query.filter_by(
                 user_id=user.id,
                 business_id=business.id
             ).first()
 
-            # If not linked → auto link
             if not business_user:
                 business_user = BusinessUser(
                     user_id=user.id,
@@ -147,11 +170,21 @@ def user_login(slug):
                 db.session.add(business_user)
                 db.session.commit()
 
-            login_user(user)
-
-            return redirect(
-                url_for("business.user_dashboard", slug=slug)
+            access_token = create_access_token(
+                identity=str(user.id),
+                additional_claims={
+                    "business_id": business.id,
+                    "role": "customer"
+                }
             )
+
+            response = make_response(
+                redirect(url_for("business.user_dashboard", slug=slug))
+            )
+
+            set_access_cookies(response, access_token)
+
+            return response
 
         flash("Invalid email or password", "error")
 
@@ -159,58 +192,18 @@ def user_login(slug):
         "user/user_login.html",
         business=business
     )
-@business_bp.route("/<slug>/user/dashboard")
-@login_required
-def user_dashboard(slug):
-    business = g.current_business
-
-    return render_template(
-        "user/user_dashboard.html",
-        business=business
-    )
-
-# -----------------------------
-# LOAD BUSINESS FROM SLUG
-# -----------------------------
-@business_bp.url_value_preprocessor
-def get_business(endpoint, values):
-    slug = values.get("slug")
-    if slug:
-        business = Business.query.filter_by(
-            slug=slug
-        ).first_or_404()
-        g.current_business = business
 
 
-# -----------------------------
-# ADMIN DASHBOARD
-# -----------------------------
-@business_bp.route("/<slug>/admin/dashboard")
-@login_required
-def admin_dashboard(slug):
-    business = g.current_business
-
-    business_user = BusinessUser.query.filter_by(
-        user_id=current_user.id,
-        business_id=business.id,
-        role="admin"
-    ).first()
-
-    if not business_user:
-        abort(403)
-
-    return render_template(
-        "business/admin/admin_dashboard.html",
-        business=business
-    )
 # -----------------------------
 # USER REGISTER
 # -----------------------------
 @business_bp.route("/<slug>/user/register", methods=["GET", "POST"])
 def user_register(slug):
+
     business = g.current_business
 
     if request.method == "POST":
+
         name = request.form.get("name")
         email = request.form.get("email")
         password = request.form.get("password")
@@ -221,17 +214,16 @@ def user_register(slug):
             flash("Email already registered. Please login.", "error")
             return redirect(url_for("business.user_login", slug=slug))
 
-        # Create new user
         new_user = User(
             name=name,
             email=email
         )
+
         new_user.set_password(password)
 
         db.session.add(new_user)
         db.session.commit()
 
-        # Link user to business as customer
         business_user = BusinessUser(
             user_id=new_user.id,
             business_id=business.id,
@@ -241,13 +233,97 @@ def user_register(slug):
         db.session.add(business_user)
         db.session.commit()
 
-        login_user(new_user)
-
-        return redirect(
-            url_for("business.user_dashboard", slug=slug)
+        access_token = create_access_token(
+            identity=str(new_user.id),
+            additional_claims={
+                "business_id": business.id,
+                "role": "customer"
+            }
         )
+
+        response = make_response(
+            redirect(url_for("business.user_dashboard", slug=slug))
+        )
+
+        set_access_cookies(response, access_token)
+
+        return response
 
     return render_template(
         "user/user_register.html",
         business=business
     )
+
+
+# -----------------------------
+# USER DASHBOARD
+# -----------------------------
+@business_bp.route("/<slug>/user/dashboard")
+@jwt_required(locations=["cookies"])
+def user_dashboard(slug):
+
+    business = g.current_business
+
+    user_id = get_jwt_identity()
+
+    user = User.query.get(user_id)
+
+    return render_template(
+        "user/user_dashboard.html",
+        business=business,
+        user=user
+    )
+
+
+# -----------------------------
+# ADMIN DASHBOARD
+# -----------------------------
+@business_bp.route("/<slug>/admin/dashboard")
+@jwt_required(locations=["cookies"])
+def admin_dashboard(slug):
+
+    business = g.current_business
+
+    user_id = get_jwt_identity()
+    claims = get_jwt()
+
+    if claims["role"] != "admin":
+        abort(403)
+
+    user = User.query.get(user_id)
+
+    return render_template(
+        "business/admin/admin_dashboard.html",
+        business=business,
+        user=user
+    )
+
+
+# -----------------------------
+# LOGOUT
+# -----------------------------
+@business_bp.route("/logout")
+def logout():
+
+    response = make_response(redirect("/"))
+
+    unset_jwt_cookies(response)
+
+    return response
+
+
+# -----------------------------
+# LOAD BUSINESS FROM SLUG
+# -----------------------------
+@business_bp.url_value_preprocessor
+def get_business(endpoint, values):
+
+    slug = values.get("slug")
+
+    if slug:
+
+        business = Business.query.filter_by(
+            slug=slug
+        ).first_or_404()
+
+        g.current_business = business
