@@ -25,6 +25,7 @@ from app.models.service import Service
 from app.models.user import User
 from app.models.business_user import BusinessUser
 from app.extensions import db
+from app.models.master_service import MasterService
 
 import os
 
@@ -329,3 +330,41 @@ def get_business(endpoint, values):
         ).first_or_404()
 
         g.current_business = business
+
+
+@business_bp.route("/<slug>/admin/services", methods=["GET", "POST"])
+@jwt_required(locations=["cookies"])
+def admin_services(slug):
+
+    business = g.current_business
+
+    master_services = MasterService.query.filter_by(
+        category=business.category
+    ).all()
+
+    if request.method == "POST":
+
+        selected_services = request.form.getlist("services")
+
+        for service_id in selected_services:
+
+            service = Service(
+                business_id=business.id,
+                master_service_id=service_id
+            )
+
+            db.session.add(service)
+
+        db.session.commit()
+
+        flash("Services updated successfully")
+
+        return redirect(
+            url_for("business.admin_services", slug=slug)
+        )
+
+    return render_template(
+        "business/admin/admin_services.html",
+        business=business,
+        master_services=master_services
+    )

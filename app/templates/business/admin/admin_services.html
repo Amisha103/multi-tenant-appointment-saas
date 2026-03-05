@@ -1,0 +1,18 @@
+<form method="POST">
+
+<h2>Select Services</h2>
+
+{% for service in master_services %}
+
+<label>
+<input type="checkbox" name="services" value="{{ service.id }}">
+{{ service.name }}
+</label>
+
+<br>
+
+{% endfor %}
+
+<button type="submit">Save Services</button>
+
+</form>
