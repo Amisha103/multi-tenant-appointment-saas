@@ -47,7 +47,7 @@ def business_home(slug):
     business = g.current_business
 
     services = Service.query.filter_by(
-        business_id=business.id
+        tenant_id=business.id
     ).all()
 
     category = business.category.lower()
@@ -332,12 +332,14 @@ def get_business(endpoint, values):
         g.current_business = business
 
 
+#ADMIN_MASTER_SERVICE FETCHING ROUTE 
 @business_bp.route("/<slug>/admin/services", methods=["GET", "POST"])
 @jwt_required(locations=["cookies"])
 def admin_services(slug):
 
     business = g.current_business
 
+    # Fetch services based on business category
     master_services = MasterService.query.filter_by(
         category=business.category
     ).all()
@@ -349,7 +351,7 @@ def admin_services(slug):
         for service_id in selected_services:
 
             service = Service(
-                business_id=business.id,
+                tenant_id=business.id,
                 master_service_id=service_id
             )
 
