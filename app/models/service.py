@@ -7,9 +7,9 @@ class Service(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    business_id = db.Column(
+    tenant_id = db.Column(
         db.Integer,
-        db.ForeignKey("business.id"),
+        db.ForeignKey("businesses.id"),
         nullable=False
     )
 
@@ -23,4 +23,7 @@ class Service(db.Model):
 
     duration = db.Column(db.Integer)
 
-    master_service = db.relationship("MasterService")
+    business = db.relationship(
+        "Business",
+        back_populates="services"
+    )
