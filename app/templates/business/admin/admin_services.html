@@ -1,82 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Select Services</title>
+<title>Select Services</title>
 
-    <style>
+<style>
 
-        body{
-            font-family: Arial, Helvetica, sans-serif;
-            background:#f5f7fb;
-            margin:0;
-            padding:40px;
-        }
+body{
+font-family:Arial;
+background:#f5f7fb;
+margin:0;
+padding:40px;
+}
 
-        .container{
-            max-width:1000px;
-            margin:auto;
-        }
+.container{
+max-width:1000px;
+margin:auto;
+}
 
-        h2{
-            text-align:center;
-            margin-bottom:30px;
-            color:#333;
-        }
+h2{
+text-align:center;
+margin-bottom:30px;
+color:#333;
+}
 
-        .services-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-            gap:20px;
-        }
+.services-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
 
-        .service-card{
-            background:white;
-            border-radius:10px;
-            padding:20px;
-            box-shadow:0 4px 10px rgba(0,0,0,0.05);
-            display:flex;
-            align-items:center;
-            transition:0.2s;
-            cursor:pointer;
-        }
+.service-card{
+background:white;
+border-radius:10px;
+padding:20px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+display:flex;
+align-items:center;
+cursor:pointer;
+}
 
-        .service-card:hover{
-            transform:translateY(-4px);
-            box-shadow:0 6px 14px rgba(0,0,0,0.1);
-        }
+.service-card input{
+margin-right:10px;
+}
 
-        .service-card input{
-            margin-right:12px;
-            width:18px;
-            height:18px;
-        }
+.other-input{
+display:none;
+margin-top:20px;
+text-align:center;
+}
 
-        .service-name{
-            font-size:16px;
-            color:#444;
-        }
+.other-input input{
+padding:10px;
+width:250px;
+border-radius:6px;
+border:1px solid #ccc;
+}
 
-        .submit-btn{
-            margin-top:30px;
-            display:block;
-            width:200px;
-            margin-left:auto;
-            margin-right:auto;
-            padding:12px;
-            border:none;
-            border-radius:8px;
-            background:#4f46e5;
-            color:white;
-            font-size:16px;
-            cursor:pointer;
-            transition:0.2s;
-        }
+.submit-btn{
+margin-top:30px;
+display:block;
+width:200px;
+margin-left:auto;
+margin-right:auto;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#4f46e5;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
 
-        .submit-btn:hover{
-            background:#4338ca;
-        }
-
-    </style>
+</style>
 
 </head>
 
@@ -84,37 +79,56 @@
 
 <div class="container">
 
-    <h2>Select Services</h2>
+<h2>Select Services</h2>
 
-    <form method="POST">
+<form method="POST">
 
-        <div class="services-grid">
+<div class="services-grid">
 
-            {% for service in master_services %}
+{% for service in master_services %}
 
-            <label class="service-card">
+<label class="service-card">
+<input type="checkbox" name="services" value="{{ service.id }}">
+<span>{{ service.name }}</span>
+</label>
 
-                <input type="checkbox"
-                       name="services"
-                       value="{{ service.id }}">
+{% endfor %}
 
-                <span class="service-name">
-                    {{ service.name }}
-                </span>
+<!-- OTHER SERVICE OPTION -->
 
-            </label>
-
-            {% endfor %}
-
-        </div>
-
-        <button type="submit" class="submit-btn">
-            Save Services
-        </button>
-
-    </form>
+<label class="service-card">
+<input type="checkbox" id="otherCheck">
+<span>Other Service</span>
+</label>
 
 </div>
+
+<div class="other-input" id="otherInput">
+<input type="text" name="other_service" placeholder="Enter new service">
+</div>
+
+<button type="submit" class="submit-btn">
+Save Services
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+const otherCheck = document.getElementById("otherCheck")
+const otherInput = document.getElementById("otherInput")
+
+otherCheck.addEventListener("change", function(){
+if(this.checked){
+otherInput.style.display="block"
+}else{
+otherInput.style.display="none"
+}
+})
+
+</script>
 
 </body>
 </html>

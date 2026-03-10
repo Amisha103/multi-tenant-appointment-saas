@@ -332,14 +332,11 @@ def get_business(endpoint, values):
         g.current_business = business
 
 
-#ADMIN_MASTER_SERVICE FETCHING ROUTE 
-@business_bp.route("/<slug>/admin/services", methods=["GET", "POST"])
-@jwt_required(locations=["cookies"])
+@business_bp.route("/<slug>/admin/services", methods=["GET","POST"])
 def admin_services(slug):
 
-    business = g.current_business
+    business = Business.query.filter_by(slug=slug).first_or_404()
 
-    # Fetch services based on business category
     master_services = MasterService.query.filter_by(
         category=business.category
     ).all()
@@ -348,10 +345,27 @@ def admin_services(slug):
 
         selected_services = request.form.getlist("services")
 
+        other_service = request.form.get("other_service")
+
+        # Add new service if provided
+        if other_service and other_service.strip():
+
+            new_master = MasterService(
+                name=other_service,
+                category=business.category
+            )
+
+            db.session.add(new_master)
+            db.session.commit()
+
+            selected_services.append(str(new_master.id))
+
+
+        # Save services for business
         for service_id in selected_services:
 
             service = Service(
-                tenant_id=business.id,
+                business_id=business.id,
                 master_service_id=service_id
             )
 
@@ -359,14 +373,31 @@ def admin_services(slug):
 
         db.session.commit()
 
-        flash("Services updated successfully")
+        flash("Services saved successfully")
 
-        return redirect(
-            url_for("business.admin_services", slug=slug)
-        )
+        return redirect(url_for(
+            "business.admin_services",
+            slug=business.slug
+        ))
+
 
     return render_template(
-        "business/admin/admin_services.html",
+        "business/admin_services.html",
         business=business,
         master_services=master_services
+    )
+
+@business_bp.route("/<slug>/book")
+def book_appointment(slug):
+
+    business = Business.query.filter_by(slug=slug).first_or_404()
+
+    services = Service.query.filter_by(
+        business_id=business.id
+    ).all()
+
+    return render_template(
+        "business/book_appointment.html",
+        business=business,
+        services=services
     )
