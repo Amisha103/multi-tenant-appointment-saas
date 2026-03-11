@@ -333,13 +333,23 @@ def get_business(endpoint, values):
 
 
 @business_bp.route("/<slug>/admin/services", methods=["GET","POST"])
+@jwt_required(locations=["cookies"])
 def admin_services(slug):
 
-    business = Business.query.filter_by(slug=slug).first_or_404()
+    business = g.current_business
 
-    master_services = MasterService.query.filter_by(
-        category=business.category
+    existing_services = Service.query.filter_by(
+    tenant_id=business.id
     ).all()
+
+    existing_master_ids = [
+    s.master_service_id for s in existing_services
+]
+
+    master_services = MasterService.query.filter(
+    MasterService.category == business.category,
+    ~MasterService.id.in_(existing_master_ids)
+).all()
 
     if request.method == "POST":
 
@@ -347,11 +357,10 @@ def admin_services(slug):
 
         other_service = request.form.get("other_service")
 
-        # Add new service if provided
         if other_service and other_service.strip():
 
             new_master = MasterService(
-                name=other_service,
+                name=other_service.strip(),
                 category=business.category
             )
 
@@ -360,29 +369,29 @@ def admin_services(slug):
 
             selected_services.append(str(new_master.id))
 
-
-        # Save services for business
         for service_id in selected_services:
+            existing_service = Service.query.filter_by(
+            tenant_id=business.id,
+            master_service_id=service_id
+            ).first()
 
-            service = Service(
-                business_id=business.id,
+            if not existing_service:
+                service = Service(
+                tenant_id=business.id,
                 master_service_id=service_id
             )
 
-            db.session.add(service)
+                db.session.add(service)
 
-        db.session.commit()
-
-        flash("Services saved successfully")
+        flash("Services saved successfully", "success")
 
         return redirect(url_for(
-            "business.admin_services",
+            "business.admin_dashboard",
             slug=business.slug
         ))
 
-
     return render_template(
-        "business/admin_services.html",
+        "business/admin/admin_services.html",
         business=business,
         master_services=master_services
     )

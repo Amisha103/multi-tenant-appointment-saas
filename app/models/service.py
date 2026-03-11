@@ -27,3 +27,10 @@ class Service(db.Model):
         "Business",
         back_populates="services"
     )
+    __table_args__ = (
+    db.UniqueConstraint(
+        "tenant_id",
+        "master_service_id",
+        name="unique_service_per_business"
+    ),
+)
