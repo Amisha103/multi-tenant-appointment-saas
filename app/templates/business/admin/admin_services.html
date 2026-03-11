@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Select Services</title>
+<title>Manage Services</title>
 
 <style>
 
@@ -13,7 +13,7 @@ padding:40px;
 }
 
 .container{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
 }
 
@@ -22,6 +22,54 @@ text-align:center;
 margin-bottom:30px;
 color:#333;
 }
+
+/* EXISTING SERVICES TABLE */
+
+.services-table{
+width:100%;
+border-collapse:collapse;
+margin-bottom:40px;
+background:white;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+
+.services-table th,
+.services-table td{
+padding:12px;
+border-bottom:1px solid #eee;
+text-align:center;
+}
+
+.services-table th{
+background:#f3f4f6;
+}
+
+input[type="number"]{
+padding:6px;
+width:90px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.update-btn{
+padding:6px 10px;
+border:none;
+background:#22c55e;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.delete-btn{
+padding:6px 10px;
+border:none;
+background:#ef4444;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* ADD SERVICES GRID */
 
 .services-grid{
 display:grid;
@@ -79,39 +127,99 @@ cursor:pointer;
 
 <div class="container">
 
-<h2>Select Services</h2>
+<h2>Manage Services</h2>
 
-<form method="POST">
+<!-- EXISTING SERVICES -->
+
+{% if services %}
+
+<table class="services-table">
+
+<thead>
+<tr>
+<th>Service</th>
+<th>Price (₹)</th>
+<th>Duration (min)</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for service, master in services %}
+
+<tr>
+
+<td>{{ master.name }}</td>
+
+<td>
+<form method="POST" action="{{ url_for('business.update_service', slug=business.slug, id=service.id) }}">
+<input type="number" name="price" value="{{ service.price or '' }}" placeholder="Price">
+</td>
+
+<td>
+<input type="number" name="duration" value="{{ service.duration or '' }}" placeholder="Duration">
+</td>
+
+<td>
+
+<button class="update-btn" type="submit">
+Update
+</button>
+
+</form>
+
+<a href="{{ url_for('business.delete_service', slug=business.slug, id=service.id) }}">
+<button class="delete-btn">
+Delete
+</button>
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endif %}
+
+
+<!-- ADD NEW SERVICES -->
+
+<h2>Add Services</h2>
+
+<form method="POST" action="{{ url_for('business.save_service', slug=business.slug) }}">
 
 <div class="services-grid">
 
 {% for service in master_services %}
-
 <label class="service-card">
-<input type="checkbox" name="services" value="{{ service.id }}">
-<span>{{ service.name }}</span>
+  <input type="checkbox" name="services" value="{{ service.id }}">
+  <span>{{ service.name }}</span>
 </label>
-
 {% endfor %}
 
 <!-- OTHER SERVICE OPTION -->
-
 <label class="service-card">
-<input type="checkbox" id="otherCheck">
-<span>Other Service</span>
+  <input type="checkbox" id="otherCheck">
+  <span>Other Service</span>
 </label>
 
 </div>
 
 <div class="other-input" id="otherInput">
-<input type="text" name="other_service" placeholder="Enter new service">
+  <input type="text" name="other_service" placeholder="Enter new service">
 </div>
 
-<button type="submit" class="submit-btn">
-Save Services
-</button>
+<button type="submit" class="submit-btn">Save Services</button>
 
 </form>
+
+
 
 </div>
 
@@ -121,11 +229,13 @@ const otherCheck = document.getElementById("otherCheck")
 const otherInput = document.getElementById("otherInput")
 
 otherCheck.addEventListener("change", function(){
+
 if(this.checked){
 otherInput.style.display="block"
 }else{
 otherInput.style.display="none"
 }
+
 })
 
 </script>
