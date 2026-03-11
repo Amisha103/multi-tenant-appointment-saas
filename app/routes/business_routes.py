@@ -46,9 +46,12 @@ def business_home(slug):
 
     business = g.current_business
 
-    services = Service.query.filter_by(
-        tenant_id=business.id
-    ).all()
+    services = (
+    db.session.query(Service, MasterService)
+    .join(MasterService, Service.master_service_id == MasterService.id)
+    .filter(Service.tenant_id == business.id)
+    .all()
+)
 
     category = business.category.lower()
 

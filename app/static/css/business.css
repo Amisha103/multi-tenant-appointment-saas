@@ -191,7 +191,19 @@ body {
     text-decoration: none;
     border-radius: 5px;
 }
+.extra-service{
+    display:none;
+}
 
+#viewAllBtn{
+    margin-top:10px;
+    padding:8px 14px;
+    border:none;
+    background:#111;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
 .close-btn {
     margin-top: 15px;
     padding: 8px 15px;
