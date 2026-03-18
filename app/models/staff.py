@@ -10,7 +10,7 @@ class Staff(db.Model):
     name = db.Column(db.String(100), nullable=True)   # set later
     password = db.Column(db.String(200), nullable=True)  # set later
 
-    tenant_id = db.Column(db.Integer, db.ForeignKey('business.id'), nullable=False)
+    tenant_id = db.Column(db.Integer, db.ForeignKey('businesses.id'), nullable=False)
 
     __table_args__ = (
         db.UniqueConstraint('tenant_id', 'staff_id'),

@@ -308,9 +308,7 @@ def logout(slug):
     return response
 
 
-# -----------------------------
-# LOAD BUSINESS FROM SLUG
-# -----------------------------
+
 @business_bp.url_value_preprocessor
 def get_business(endpoint, values):
 
@@ -323,54 +321,8 @@ def get_business(endpoint, values):
         ).first_or_404()
 
         g.current_business = business
-# -----------------------------
-# STAFF LOGIN
-# -----------------------------
-@business_bp.route("/<slug>/staff/login", methods=["GET", "POST"])
-def staff_login(slug):
-    business = g.current_business
-
-    if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
-
-        user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):
-            business_user = BusinessUser.query.filter_by(
-                user_id=user.id,
-                business_id=business.id,
-                role="staff"
-            ).first()
-
-            if not business_user:
-                flash("You are not registered as staff for this business", "error")
-                return redirect(url_for("business.staff_login", slug=slug))
-
-            access_token = create_access_token(
-                identity=str(user.id),
-                additional_claims={
-                    "business_id": business.id,
-                    "role": "staff"
-                }
-            )
-
-            response = make_response(
-                redirect(url_for("business.staff_dashboard", slug=slug))
-            )
-            set_access_cookies(response, access_token)
-            return response
-
-        flash("Invalid credentials", "error")
-
-    return render_template(
-        "business/staff/staff_login.html",
-        business=business
-    )
 
 
-# -----------------------------
-# USER LOGIN
-# -----------------------------
 @business_bp.route("/<slug>/user/login", methods=["GET", "POST"])
 def user_login(slug):
     business = g.current_business
@@ -416,9 +368,7 @@ def user_login(slug):
         business=business
     )
 
-# -----------------------------
-# SAVE NEW SERVICES (from checkboxes)
-# -----------------------------
+
 @business_bp.route("/<slug>/admin/services/save", methods=["POST"])
 @jwt_required(locations=["cookies"])
 def save_service(slug):
