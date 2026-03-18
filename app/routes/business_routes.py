@@ -10,6 +10,7 @@ from flask import (
     abort,
     make_response
 )
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_jwt_extended import (
     create_access_token,
@@ -560,3 +561,29 @@ def staff_dashboard(slug):
         return "Unauthorized", 403
 
     return "Welcome to Staff Dashboard"
+
+@business_bp.route("/<slug>/staff/check", methods=["GET", "POST"])
+def check_staff(slug):
+    business = Business.query.filter_by(slug=slug).first()
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        staff_id = request.form.get("staff_id")
+
+        staff = Staff.query.filter_by(
+            email=email,
+            staff_id=staff_id,
+            tenant_id=business.id
+        ).first()
+
+        if not staff:
+            flash("Invalid details", "danger")
+            return redirect(request.url)
+
+        return redirect(url_for(
+            "business.set_staff_password",
+            slug=slug,
+            id=staff.id
+        ))
+
+    return render_template("business/staff/check_staff.html", business=business)
