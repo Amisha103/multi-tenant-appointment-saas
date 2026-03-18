@@ -49,7 +49,6 @@
 </head>
 <body>
 
-<div class="container">
     <h2>Staff Login</h2>
 
     <form method="POST">
@@ -60,12 +59,11 @@
         <button type="submit">Login</button>
     </form>
 
-    <div class="link">
-        <p>First time login?</p>
-        <a href="{{ url_for('set_staff_password') }}">
-            Set your password
-        </a>
-    </div>
+
+       <div class="helper-text">
+    First time login? Just enter your email and staff ID.
+</div>
+
 </div>
 
 </body>

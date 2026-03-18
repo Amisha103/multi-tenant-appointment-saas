@@ -547,7 +547,7 @@ def set_staff_password(slug, id):
         flash("Account setup complete. Please login.", "success")
         return redirect(url_for("business.staff_login", slug=slug))
 
-    return render_template("business/staff/set_staff_password.html", staff=staff)
+    return render_template("business/staff/staff_set_password.html", staff=staff)
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
