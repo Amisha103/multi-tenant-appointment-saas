@@ -1,0 +1,42 @@
+{% extends "business/admin/base_admin.html" %}
+
+{% block content %}
+
+<h2>Manage Staff</h2>
+
+<!-- ADD STAFF -->
+<form method="POST" style="margin-bottom:30px;">
+    <input type="email" name="email" placeholder="Enter staff email" required>
+    <button type="submit">Add Staff</button>
+</form>
+
+<!-- STAFF TABLE -->
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    <tr>
+        <th>Staff ID</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Status</th>
+    </tr>
+
+    {% for staff in staff_list %}
+    <tr>
+        <td>{{ staff.staff_id }}</td>
+        <td>{{ staff.email }}</td>
+
+        <td>
+            {{ staff.name if staff.name else "Not Set" }}
+        </td>
+
+        <td>
+            {% if staff.password %}
+                Active
+            {% else %}
+                Pending
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

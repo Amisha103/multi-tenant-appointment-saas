@@ -23,6 +23,7 @@ from flask_jwt_extended import (
 from app.models.business import Business
 from app.models.service import Service
 from app.models.user import User
+from app.models.staff import Staff
 from app.models.business_user import BusinessUser
 from app.models.master_service import MasterService
 from app.extensions import db
@@ -456,3 +457,106 @@ def save_service(slug):
 
     flash("Services saved successfully", "success")
     return redirect(url_for("business.admin_services", slug=business.slug))
+
+@business_bp.route("/<slug>/admin/staff", methods=["GET", "POST"])
+@jwt_required(locations=["cookies"])
+def admin_staff(slug):
+    business = g.current_business
+    tenant_id = business.id
+
+    if request.method == "POST":
+        email = request.form.get("email")
+
+        
+        sequence_name = f"staff_id_seq_{tenant_id}"
+
+        db.session.execute(db.text(f"""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM pg_class WHERE relname = '{sequence_name}'
+            ) THEN
+                CREATE SEQUENCE {sequence_name} START 100;
+            END IF;
+        END
+        $$;
+        """))
+
+        result = db.session.execute(
+            db.text(f"SELECT nextval('{sequence_name}')")
+        )
+        staff_id = result.scalar()
+
+        new_staff = Staff(
+            email=email,
+            staff_id=staff_id,
+            tenant_id=tenant_id
+        )
+
+        db.session.add(new_staff)
+        db.session.commit()
+
+        flash("Staff added successfully", "success")
+        return redirect(url_for("business.admin_staff", slug=slug))
+
+    
+    staff_list = Staff.query.filter_by(tenant_id=tenant_id).all()
+
+    return render_template(
+        "business/admin/admin_staff.html",
+        business=business,
+        staff_list=staff_list
+    )
+
+@business_bp.route("/<slug>/staff/login", methods=["GET", "POST"])
+def staff_login(slug):
+    business = Business.query.filter_by(slug=slug).first()
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        staff_id = request.form.get("staff_id")
+
+        staff = Staff.query.filter_by(
+            email=email,
+            staff_id=staff_id,
+            tenant_id=business.id
+        ).first()
+
+        if not staff:
+            flash("Invalid credentials", "danger")
+            return redirect(request.url)
+
+        # First time login
+        if not staff.password:
+            return redirect(url_for("business.set_staff_password", id=staff.id, slug=slug))
+
+        # Normal login
+        password = request.form.get("password")
+
+        if check_password_hash(staff.password, password):
+            # TODO: set session / JWT
+            flash("Login successful", "success")
+            return redirect(url_for("business.staff_dashboard", slug=slug))
+
+        else:
+            flash("Wrong password", "danger")
+
+    return render_template("business/staff_login.html", business=business)
+
+@business_bp.route("/<slug>/staff/setup/<int:id>", methods=["GET", "POST"])
+def set_staff_password(slug, id):
+    staff = Staff.query.get_or_404(id)
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        password = request.form.get("password")
+
+        staff.name = name
+        staff.password = generate_password_hash(password)
+
+        db.session.commit()
+
+        flash("Account setup complete. Please login.", "success")
+        return redirect(url_for("business.staff_login", slug=slug))
+
+    return render_template("business/set_staff_password.html", staff=staff)
