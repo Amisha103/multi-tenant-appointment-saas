@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f5f7fb;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111827;
+            color: white;
+            padding: 14px 25px;
+        }
+
+        .navbar .left {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .navbar .right a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        .navbar .right a:hover {
+            text-decoration: underline;
+        }
+
+        /* PAGE CONTENT */
+        .content {
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="left">
+        {{ business.name }} Admin
+    </div>
+
+    <div class="right">
+        <a href="{{ url_for('business.business_home', slug=business.slug) }}">Home</a>
+        <a href="{{ url_for('business.admin_dashboard', slug=business.slug) }}">Dashboard</a>
+        <a href="{{ url_for('business.admin_services', slug=business.slug) }}">Services</a>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

@@ -42,6 +42,7 @@ class Business(db.Model):
     back_populates="business",
     cascade="all, delete-orphan"
     )
+    
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
