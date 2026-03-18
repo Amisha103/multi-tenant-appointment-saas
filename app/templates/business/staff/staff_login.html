@@ -1,8 +1,72 @@
-<h2>Staff Login</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Login</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f6f9;
+        }
+        .container {
+            width: 350px;
+            margin: 80px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .link a {
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
 
-<form method="POST">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="number" name="staff_id" placeholder="Staff ID" required>
-    <input type="password" name="password" placeholder="Password (if set)">
-    <button type="submit">Login</button>
-</form>
+<div class="container">
+    <h2>Staff Login</h2>
+
+    <form method="POST">
+        <input type="email" name="email" placeholder="Enter Email" required>
+        <input type="number" name="staff_id" placeholder="Enter Staff ID" required>
+        <input type="password" name="password" placeholder="Enter Password">
+        
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="link">
+        <p>First time login?</p>
+        <a href="{{ url_for('set_staff_password') }}">
+            Set your password
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

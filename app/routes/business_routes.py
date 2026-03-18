@@ -457,14 +457,19 @@ def admin_staff(slug):
         business=business,
         staff_list=staff_list
     )
+from flask_jwt_extended import create_access_token
 
 @business_bp.route("/<slug>/staff/login", methods=["GET", "POST"])
 def staff_login(slug):
     business = Business.query.filter_by(slug=slug).first()
 
+    if not business:
+        return "Business not found", 404
+
     if request.method == "POST":
         email = request.form.get("email")
         staff_id = request.form.get("staff_id")
+        password = request.form.get("password")
 
         staff = Staff.query.filter_by(
             email=email,
@@ -476,30 +481,63 @@ def staff_login(slug):
             flash("Invalid credentials", "danger")
             return redirect(request.url)
 
-        # First time login
+        # 🔥 First-time login
         if not staff.password:
-            return redirect(url_for("business.set_staff_password", id=staff.id, slug=slug))
+            return redirect(url_for(
+                "business.set_staff_password",
+                id=staff.id,
+                slug=slug
+            ))
 
-        # Normal login
-        password = request.form.get("password")
+        # 🔐 Check password
+        if not password:
+            flash("Please enter password", "danger")
+            return redirect(request.url)
 
         if check_password_hash(staff.password, password):
-            # TODO: set session / JWT
+            # ✅ CREATE JWT
+            access_token = create_access_token(
+                identity={
+                    "staff_id": staff.id,
+                    "tenant_id": business.id,
+                    "role": "staff"
+                }
+            )
+
+            response = redirect(url_for("business.staff_dashboard", slug=slug))
+            
+            # Store token in cookie (recommended)
+            response.set_cookie("access_token", access_token, httponly=True)
+
             flash("Login successful", "success")
-            return redirect(url_for("business.staff_dashboard", slug=slug))
+            return response
 
         else:
             flash("Wrong password", "danger")
 
-    return render_template("business/staff_login.html", business=business)
+    return render_template("business/staff/staff_login.html", business=business)
 
 @business_bp.route("/<slug>/staff/setup/<int:id>", methods=["GET", "POST"])
 def set_staff_password(slug, id):
-    staff = Staff.query.get_or_404(id)
+    business = Business.query.filter_by(slug=slug).first()
+
+    if not business:
+        return "Business not found", 404
+
+    # 🔥 IMPORTANT: Tenant isolation
+    staff = Staff.query.filter_by(
+        id=id,
+        tenant_id=business.id
+    ).first_or_404()
 
     if request.method == "POST":
         name = request.form.get("name")
         password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if password != confirm_password:
+            flash("Passwords do not match", "danger")
+            return redirect(request.url)
 
         staff.name = name
         staff.password = generate_password_hash(password)
@@ -509,4 +547,16 @@ def set_staff_password(slug, id):
         flash("Account setup complete. Please login.", "success")
         return redirect(url_for("business.staff_login", slug=slug))
 
-    return render_template("business/set_staff_password.html", staff=staff)
+    return render_template("business/staff/set_staff_password.html", staff=staff)
+
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+@business_bp.route("/<slug>/staff/dashboard")
+@jwt_required()
+def staff_dashboard(slug):
+    current_user = get_jwt_identity()
+
+    if current_user["role"] != "staff":
+        return "Unauthorized", 403
+
+    return "Welcome to Staff Dashboard"
