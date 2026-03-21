@@ -505,18 +505,17 @@ def staff_login(slug):
                 }
             )
 
-            response = redirect(url_for("business.staff_dashboard", slug=slug))
-            
-            # Store token in cookie (recommended)
-            response.set_cookie("access_token", access_token, httponly=True)
+            response = make_response(
+    redirect(url_for("business.staff_dashboard", slug=slug))
+)
 
-            flash("Login successful", "success")
-            return response
+            set_access_cookies(response, access_token)
 
-        else:
-            flash("Wrong password", "danger")
+        return response
 
-    return render_template("business/staff/staff_login.html", business=business)
+
+
+   
 
 @business_bp.route("/<slug>/staff/setup/<int:id>", methods=["GET", "POST"])
 def set_staff_password(slug, id):
@@ -550,17 +549,35 @@ def set_staff_password(slug, id):
 
     return render_template("business/staff/staff_set_password.html", staff=staff)
 
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 @business_bp.route("/<slug>/staff/dashboard")
-@jwt_required()
+@jwt_required(locations=["cookies"])
 def staff_dashboard(slug):
+
+    business = g.current_business
     current_user = get_jwt_identity()
 
-    if current_user["role"] != "staff":
-        return "Unauthorized", 403
+    
+    if current_user.get("role") != "staff":
+        abort(403)
 
-    return "Welcome to Staff Dashboard"
+    staff_id = current_user.get("staff_id")
+
+    
+    staff = Staff.query.filter_by(
+        id=staff_id,
+        tenant_id=business.id
+    ).first_or_404()
+
+    
+    appointments = []
+
+    return render_template(
+        "business/staff/staff_dashboard.html",
+        business=business,
+        staff=staff,
+        appointments=appointments
+    )
 
 @business_bp.route("/<slug>/staff/check", methods=["GET", "POST"])
 def check_staff(slug):
@@ -587,3 +604,29 @@ def check_staff(slug):
         ))
 
     return render_template("business/staff/check_staff.html", business=business)
+
+@business_bp.route("/<slug>/staff/add-appointment", methods=["POST"])
+@jwt_required(locations=["cookies"])
+def add_appointment(slug):
+
+    business = g.current_business
+    current_user = get_jwt_identity()
+
+    if current_user.get("role") != "staff":
+        abort(403)
+
+    staff_id = current_user.get("staff_id")
+
+    # 🔥 Get form data
+    customer_name = request.form.get("customer_name")
+    service = request.form.get("service")
+    date = request.form.get("date")
+    time = request.form.get("time")
+
+    # ⚠️ For now we just flash (until model is created)
+    flash("Appointment added (temporary, no DB yet)", "success")
+
+    return redirect(url_for(
+        "business.staff_dashboard",
+        slug=slug
+    ))

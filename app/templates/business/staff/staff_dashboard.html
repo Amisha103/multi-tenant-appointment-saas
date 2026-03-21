@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff_dashboard.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="dashboard-header">
+    <h2>Staff Dashboard</h2>
+    <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+</div>
+
+<div class="dashboard-container">
+
+    <!-- Welcome -->
+    <div class="welcome-card">
+        <h3>Welcome, {{ staff.name }}</h3>
+        <p>Manage your appointments below</p>
+    </div>
+
+    <!-- Appointments Section -->
+    <div class="appointments-section">
+        <h3>Your Appointments</h3>
+
+        {% if appointments %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for appt in appointments %}
+                    <tr>
+                        <td>{{ appt.customer_name }}</td>
+                        <td>{{ appt.service }}</td>
+                        <td>{{ appt.date }}</td>
+                        <td>{{ appt.time }}</td>
+                        <td>
+                            {% if appt.status == "pending" %}
+                                <span class="status pending">Pending</span>
+                            {% elif appt.status == "completed" %}
+                                <span class="status completed">Completed</span>
+                            {% else %}
+                                <span class="status cancelled">Cancelled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>No appointments yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Add Appointment -->
+    <div class="add-appointment">
+        <h3>Add Appointment</h3>
+
+        <form method="POST" action="{{ url_for('business.add_appointment', slug=business.slug) }}">
+            <input type="text" name="customer_name" placeholder="Customer Name" required>
+            <input type="text" name="service" placeholder="Service" required>
+            <input type="date" name="date" required>
+            <input type="time" name="time" required>
+
+            <button type="submit">Add Appointment</button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>
