@@ -9,7 +9,7 @@ class Appointment(db.Model):
 
     service_id = db.Column(
         db.Integer,
-        db.ForeignKey("service.id"),
+        db.ForeignKey("services.id"),
         nullable=False
     )
 
@@ -22,7 +22,7 @@ class Appointment(db.Model):
     # ✅ THIS IS YOUR BUSINESS LINK
     tenant_id = db.Column(
         db.Integer,
-        db.ForeignKey("business.id"),
+        db.ForeignKey("businesses.id"),
         nullable=False
     )
 
