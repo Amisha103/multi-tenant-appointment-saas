@@ -11,7 +11,7 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f8f7f4;
+    background-color: #f7f5ef;
     color: #1f2933;
 }
 
@@ -28,7 +28,7 @@ body {
     background-color: #ffffff;
     color: #1f2933;
     padding: 1.1rem 0;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(47,111,95,0.08);
 }
 
 .header .container {
@@ -78,7 +78,7 @@ body {
 
 .footer {
     background-color: #1f2933;
-    color: #f8f7f4;
+    color: #f7f5ef;
     padding: 2.5rem 0;
     text-align: center;
     margin-top: 4rem;
@@ -91,7 +91,7 @@ body {
 
 .business-section {
     padding: 80px 90px;
-    background-color: #f8f7f4;
+    background-color: #f7f5ef;
 }
 
 .business-section h2 {
@@ -122,7 +122,7 @@ body {
     background: #ffffff;
     border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 18px 40px rgba(47,111,95,0.12);
     transition: 
         transform 0.35s ease,
         box-shadow 0.35s ease;
@@ -132,10 +132,9 @@ body {
     position: relative;
 }
 
-/* Hover lift + glow */
 .business-card:hover {
     transform: translateY(-12px);
-    box-shadow: 0 35px 70px rgba(47, 111, 95, 0.28);
+    box-shadow: 0 35px 70px rgba(47,111,95,0.25);
 }
 
 /* IMAGE */
@@ -146,7 +145,6 @@ body {
     transition: transform 0.6s ease;
 }
 
-/* Image zoom on hover */
 .business-card:hover img {
     transform: scale(1.09);
 }
@@ -157,7 +155,6 @@ body {
     transition: transform 0.35s ease;
 }
 
-/* Slight upward content motion */
 .business-card:hover .business-card-content {
     transform: translateY(-6px);
 }
@@ -165,7 +162,7 @@ body {
 /* CATEGORY BADGE */
 .business-card-content span {
     display: inline-block;
-    background: rgba(47, 111, 95, 0.12);
+    background: rgba(47,111,95,0.12);
     color: #2f6f5f;
     font-size: 12px;
     font-weight: 600;
@@ -217,7 +214,7 @@ body {
 .form-section {
     min-height: 100vh;
     padding: 90px 20px;
-    background: #f8f7f4;
+    background: #f7f5ef;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -246,7 +243,7 @@ body {
     max-width: 540px;
     padding: 44px;
     border-radius: 22px;
-    box-shadow: 0 25px 55px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 25px 55px rgba(47,111,95,0.12);
     animation: fadeUp 0.6s ease-in-out;
 }
 
@@ -271,10 +268,10 @@ body {
     width: 100%;
     padding: 13px 14px;
     border-radius: 12px;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e4dfd6;
     font-size: 14.5px;
     transition: all 0.3s ease;
-    background-color: #fafafa;
+    background-color: #fbfaf7;
 }
 
 /* Focus effect */
@@ -284,7 +281,7 @@ body {
     outline: none;
     border-color: #2f6f5f;
     background-color: #ffffff;
-    box-shadow: 0 0 0 4px rgba(47, 111, 95, 0.18);
+    box-shadow: 0 0 0 4px rgba(47,111,95,0.15);
 }
 
 /* Hint text */
@@ -310,14 +307,12 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Button hover */
 .btn-primary:hover {
     background-color: #24584b;
     transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(47, 111, 95, 0.35);
+    box-shadow: 0 14px 28px rgba(47,111,95,0.35);
 }
 
-/* Button active */
 .btn-primary:active {
     transform: translateY(0);
 }
@@ -327,7 +322,7 @@ body {
 
 .services-section {
     padding: 95px 20px;
-    background: #f8f7f4;
+    background: #f7f5ef;
     text-align: center;
 }
 
@@ -360,7 +355,7 @@ body {
     background: #ffffff;
     padding: 44px 34px;
     border-radius: 24px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 18px 40px rgba(47,111,95,0.12);
     transition: all 0.35s ease;
     position: relative;
     overflow: hidden;
@@ -383,7 +378,7 @@ body {
 
 .service-card:hover {
     transform: translateY(-12px);
-    box-shadow: 0 30px 60px rgba(47, 111, 95, 0.28);
+    box-shadow: 0 30px 60px rgba(47,111,95,0.25);
 }
 
 .service-icon {
@@ -450,9 +445,11 @@ body {
     }
 }
 
+/* ===== FLASH MESSAGES ===== */
+
 .flash-messages-container {
     position: fixed;
-    top: 90px; /* Adjust below header */
+    top: 90px;
     right: 20px;
     z-index: 1000;
     display: flex;
@@ -472,11 +469,10 @@ body {
     animation: slideDown 0.5s ease;
 }
 
-/* Different colors based on category */
-.flash-message.success { background-color: #4caf50; } /* green */
-.flash-message.error { background-color: #f44336; }   /* red */
-.flash-message.warning { background-color: #ff9800; } /* orange */
-.flash-message.info { background-color: #2196f3; }    /* blue */
+.flash-message.success { background-color: #4caf50; }
+.flash-message.error { background-color: #e53935; }
+.flash-message.warning { background-color: #ff9800; }
+.flash-message.info { background-color: #2196f3; }
 
 .flash-message .close-btn {
     position: absolute;

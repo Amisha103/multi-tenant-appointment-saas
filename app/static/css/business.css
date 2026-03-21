@@ -1,4 +1,3 @@
-
 * {
     margin: 0;
     padding: 0;
@@ -7,14 +6,14 @@
 }
 
 body {
-    background-color: #f4f6fb;
+    background-color: #f7f5ef; /* beige */
     color: #1f2937;
     line-height: 1.6;
 }
 
-
+/* NAVBAR */
 .business-navbar {
-    background: #111827;
+    background: #3c5751; /* deep green */
     color: #ffffff;
     padding: 14px 28px;
     display: flex;
@@ -25,7 +24,7 @@ body {
 .business-navbar .logo {
     font-size: 15px;
     font-weight: 500;
-    color: #e5e7eb;
+    color: #e6efe9;
     text-decoration: none;
 }
 
@@ -38,19 +37,19 @@ body {
     font-size: 16px;
 }
 
-
+/* CONTAINER */
 .business-container {
     max-width: 1100px;
     margin: 40px auto;
     padding: 0 20px;
 }
 
-
+/* MAIN CARD */
 .business-home {
     background: #ffffff;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(47,111,95,0.12);
 }
 
 .business-home h2 {
@@ -60,44 +59,43 @@ body {
 }
 
 .business-home p {
-    color: #4b5563;
+    color: #3c5751;
     margin-bottom: 6px;
 }
 
 .business-home hr {
     margin: 25px 0;
     border: none;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #e4dfd6;
 }
 
-/* Gallery container */
+/* GALLERY */
 .business-gallery {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
     justify-content: center;
     margin-top: 20px;
-        display: grid;
+    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
-    margin-top: 20px;
 }
 
-/* Individual images */
+/* IMAGES */
 .business-img {
-    width: 250px;          /* control width */
-    height: 180px;         /* fixed height */
-    object-fit: cover;     /* crop nicely */
-    border-radius: 10px;   /* soft edges */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 250px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(47,111,95,0.15);
     transition: transform 0.3s ease;
 }
 
-/* Optional hover effect */
 .business-img:hover {
     transform: scale(1.05);
 }
-/* Header Layout */
+
+/* HEADER */
 .business-header {
     display: flex;
     justify-content: space-between;
@@ -105,44 +103,43 @@ body {
     padding: 15px 40px;
 }
 
-/* Business Title */
 .business-title {
     font-size: 28px;
     font-weight: bold;
 }
 
-/* Right Side Buttons */
+/* BUTTONS */
 .auth-buttons {
     display: flex;
     gap: 10px;
 }
 
-/* Admin Button */
 .admin-btn {
     padding: 8px 16px;
-    background-color: #343a40;
+    background-color: #2f6f5f;
     color: white;
     border-radius: 8px;
     text-decoration: none;
 }
 
-/* Staff Button */
 .staff-btn {
     padding: 8px 16px;
-    background-color: #007bff;
+    background-color: #6fae99;
     color: white;
     border-radius: 8px;
     text-decoration: none;
 }
 
-/* Hover Effects */
+/* Hover */
 .admin-btn:hover {
-    background-color: #212529;
+    background-color: #56baa1;
 }
 
 .staff-btn:hover {
-    background-color: #0056b3;
+    background-color: #5a9783;
 }
+
+/* IMAGE GRID */
 .business-images {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -155,7 +152,7 @@ body {
     height: 180px;
     object-fit: cover;
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e4dfd6;
     transition: transform 0.3s ease;
 }
 
@@ -163,6 +160,7 @@ body {
     transform: scale(1.03);
 }
 
+/* MODAL */
 .role-modal {
     display: none;
     position: fixed;
@@ -176,7 +174,7 @@ body {
 }
 
 .role-modal-content {
-    background: white;
+    background: #ffffff;
     padding: 30px;
     border-radius: 8px;
     text-align: center;
@@ -186,28 +184,33 @@ body {
     display: block;
     margin: 10px 0;
     padding: 10px;
-    background: #333;
+    background: #0a2921;
     color: white;
     text-decoration: none;
     border-radius: 5px;
 }
-.extra-service{
-    display:none;
+
+/* EXTRA SERVICES */
+.extra-service {
+    display: none;
 }
 
-#viewAllBtn{
-    margin-top:10px;
-    padding:8px 14px;
-    border:none;
-    background:#111;
-    color:white;
-    border-radius:6px;
-    cursor:pointer;
+#viewAllBtn {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border: none;
+    background: #37554d;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
 }
+
 .close-btn {
     margin-top: 15px;
     padding: 8px 15px;
 }
+
+/* SERVICES LIST */
 .business-services h3 {
     font-size: 20px;
     font-weight: 600;
@@ -219,27 +222,27 @@ body {
 }
 
 .business-services li {
-    background: #f9fafb;
+    background: #fbfaf7;
     padding: 14px 18px;
     border-radius: 8px;
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e4dfd6;
 }
 
 .business-services li span {
     font-weight: 500;
 }
 
-
+/* LAST TEXT */
 .business-home p:last-child {
     font-style: italic;
     color: #6b7280;
 }
 
-
+/* LOGIN OPTIONS */
 .login-options {
     margin-top: 30px;
 }
@@ -257,17 +260,17 @@ body {
     text-decoration: none;
     font-weight: 500;
     font-size: 14px;
-    background: #2563eb;
+    background: #2f6f5f;
     color: #ffffff;
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .login-options a:hover {
-    background: #1d4ed8;
+    background: #24584b;
     transform: translateY(-2px);
 }
 
-
+/* FOOTER */
 .business-footer {
     margin-top: 60px;
     padding: 20px;
@@ -276,7 +279,7 @@ body {
     color: #6b7280;
 }
 
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
     .business-home {
         padding: 20px;

@@ -1,8 +1,10 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: #f7f5ef; /* beige */
 }
 
+/* Container */
 .admin-container {
     display: flex;
     height: 100vh;
@@ -11,7 +13,7 @@ body {
 /* Sidebar */
 .sidebar {
     width: 220px;
-    background-color: #1f2937;
+    background-color: #1f3d36; /* deep green */
     color: white;
     padding: 20px;
     display: flex;
@@ -23,18 +25,19 @@ body {
 }
 
 .sidebar a {
-    color: white;
+    color: #e6efe9; /* soft light green */
     text-decoration: none;
     margin-bottom: 15px;
+    transition: color 0.2s ease;
 }
 
 .sidebar a:hover {
-    color: #3b82f6;
+    color: #6fae99; /* accent green */
 }
 
 /* Main Content */
 .main-content {
     flex: 1;
     padding: 30px;
-    background-color: #f3f4f6;
+    background-color: #f7f5ef; /* beige */
 }

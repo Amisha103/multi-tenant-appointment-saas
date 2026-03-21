@@ -1,0 +1,94 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f1e9; /* soft beige */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container wrapper */
+.container {
+    text-align: center;
+}
+
+/* Heading */
+h2 {
+    margin-bottom: 15px;
+    color: #2f5d50; /* deep green */
+    font-weight: 600;
+}
+
+/* Form Card */
+form {
+    background: #ffffff;
+    padding: 35px 30px;
+    border-radius: 12px;
+    width: 340px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e6e0d6;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #dcd6cc;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #faf8f4;
+    transition: 0.3s;
+}
+
+/* Input focus */
+input:focus {
+    border-color: #6a9c89; /* soft green */
+    outline: none;
+    box-shadow: 0 0 4px rgba(106, 156, 137, 0.4);
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #6a9c89; /* main green */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Button hover */
+button:hover {
+    background: #588f7a;
+}
+
+/* Paragraph */
+p {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #5a5a5a;
+}
+
+/* Links */
+a {
+    color: #6a9c89;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
