@@ -20,7 +20,8 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
     set_access_cookies
 )
-
+from datetime import datetime
+from app.models.appointment import Appointment
 from app.models.business import Business
 from app.models.service import Service
 from app.models.user import User
@@ -458,7 +459,6 @@ def admin_staff(slug):
         business=business,
         staff_list=staff_list
     )
-from flask_jwt_extended import create_access_token
 
 @business_bp.route("/<slug>/staff/login", methods=["GET", "POST"])
 def staff_login(slug):
@@ -482,7 +482,7 @@ def staff_login(slug):
             flash("Invalid credentials", "danger")
             return redirect(request.url)
 
-        # 🔥 First-time login
+        # First-time login
         if not staff.password:
             return redirect(url_for(
                 "business.set_staff_password",
@@ -490,32 +490,70 @@ def staff_login(slug):
                 slug=slug
             ))
 
-        # 🔐 Check password
         if not password:
             flash("Please enter password", "danger")
             return redirect(request.url)
 
         if check_password_hash(staff.password, password):
-            # ✅ CREATE JWT
+
+            # ✅ FIXED HERE
             access_token = create_access_token(
-                identity={
-                    "staff_id": staff.id,
+                identity=str(staff.id),
+                additional_claims={
                     "tenant_id": business.id,
                     "role": "staff"
                 }
             )
 
             response = make_response(
-    redirect(url_for("business.staff_dashboard", slug=slug))
-)
+                redirect(url_for("business.staff_dashboard", slug=slug))
+            )
 
             set_access_cookies(response, access_token)
 
-        return response
+            flash("Login successful", "success")
+            return response
+
+        else:
+            flash("Wrong password", "danger")
+            return redirect(request.url)
+
+    return render_template(
+        "business/staff/staff_login.html",
+        business=business
+    )
 
 
+@business_bp.route("/<slug>/staff/check", methods=["GET", "POST"])
+def check_staff(slug):
+    business = Business.query.filter_by(slug=slug).first()
 
-   
+    if request.method == "POST":
+        email = request.form.get("email")
+        staff_id = request.form.get("staff_id")
+
+        staff = Staff.query.filter_by(
+            email=email,
+            staff_id=staff_id,
+            tenant_id=business.id
+        ).first()
+
+        if not staff:
+            flash("Invalid details", "danger")
+            return redirect(request.url)
+
+        return redirect(url_for(
+            "business.set_staff_password",
+            slug=slug,
+            id=staff.id
+        ))
+
+    return render_template(
+        "business/staff/check_staff.html",
+        business=business
+    )
+
+
 
 @business_bp.route("/<slug>/staff/setup/<int:id>", methods=["GET", "POST"])
 def set_staff_password(slug, id):
@@ -549,84 +587,120 @@ def set_staff_password(slug, id):
 
     return render_template("business/staff/staff_set_password.html", staff=staff)
 
-
-@business_bp.route("/<slug>/staff/dashboard")
+@business_bp.route("/<slug>/staff/dashboard", methods=["GET", "POST"])
 @jwt_required(locations=["cookies"])
 def staff_dashboard(slug):
 
     business = g.current_business
-    current_user = get_jwt_identity()
 
-    
-    if current_user.get("role") != "staff":
+    staff_id = get_jwt_identity()
+    claims = get_jwt()
+
+    if claims.get("role") != "staff":
         abort(403)
 
-    staff_id = current_user.get("staff_id")
-
-    
     staff = Staff.query.filter_by(
         id=staff_id,
         tenant_id=business.id
     ).first_or_404()
 
-    
-    appointments = []
+    # 🔥 GET SERVICES (for dropdown)
+    services = (
+        db.session.query(Service, MasterService)
+        .join(MasterService, Service.master_service_id == MasterService.id)
+        .filter(Service.tenant_id == business.id)
+        .all()
+    )
+
+    # 🔥 CREATE SLOT
+    if request.method == "POST":
+        time = request.form.get("time")
+        service_id = request.form.get("service_id")
+
+        slot = Appointment(
+            time=time,
+            service_id=service_id,
+            staff_id=staff.id,
+            tenant_id=business.id,
+            is_booked=False
+        )
+
+        db.session.add(slot)
+        db.session.commit()
+
+        flash("Slot created", "success")
+        return redirect(url_for("business.staff_dashboard", slug=slug))
+
+    # 🔥 GET ALL SLOTS
+    appointments = Appointment.query.filter_by(
+        tenant_id=business.id
+    ).order_by(Appointment.time).all()
 
     return render_template(
         "business/staff/staff_dashboard.html",
-        business=business,
         staff=staff,
+        business=business,
+        services=services,
         appointments=appointments
     )
 
-@business_bp.route("/<slug>/staff/check", methods=["GET", "POST"])
-def check_staff(slug):
-    business = Business.query.filter_by(slug=slug).first()
+
+@business_bp.route("/<slug>/admin/add-appointment", methods=["GET", "POST"])
+def add_appointment(slug):
+    business = g.current_business
+
+    services = (
+        db.session.query(Service, MasterService)
+        .join(MasterService, Service.master_service_id == MasterService.id)
+        .filter(Service.tenant_id == business.id)
+        .all()
+    )
 
     if request.method == "POST":
-        email = request.form.get("email")
-        staff_id = request.form.get("staff_id")
+        time_str = request.form.get("appointment_time")
+        service_id = request.form.get("service_id")
 
-        staff = Staff.query.filter_by(
-            email=email,
-            staff_id=staff_id,
+        # Convert string → datetime
+        appointment_time = datetime.fromisoformat(time_str)
+
+        new_appt = Appointment(
+            time=appointment_time,
+            service_id=service_id,
             tenant_id=business.id
-        ).first()
+        )
 
-        if not staff:
-            flash("Invalid details", "danger")
-            return redirect(request.url)
+        db.session.add(new_appt)
+        db.session.commit()
 
-        return redirect(url_for(
-            "business.set_staff_password",
-            slug=slug,
-            id=staff.id
-        ))
+        flash("Appointment slot added", "success")
+        return redirect(url_for("business.admin_dashboard", slug=slug))
 
-    return render_template("business/staff/check_staff.html", business=business)
+    return render_template(
+        "business/admin/add_appointment.html",
+        services=services,
+        business=business
+    )
 
-@business_bp.route("/<slug>/staff/add-appointment", methods=["POST"])
-@jwt_required(locations=["cookies"])
-def add_appointment(slug):
+
+@business_bp.route("/<slug>/book/<int:id>", methods=["POST"])
+def book_slot(slug, id):
 
     business = g.current_business
-    current_user = get_jwt_identity()
 
-    if current_user.get("role") != "staff":
-        abort(403)
+    slot = Appointment.query.filter_by(
+        id=id,
+        tenant_id=business.id
+    ).first_or_404()
 
-    staff_id = current_user.get("staff_id")
+    if slot.is_booked:
+        flash("Slot already booked", "error")
+        return redirect(url_for("business.view_slots", slug=slug))
 
-    # 🔥 Get form data
-    customer_name = request.form.get("customer_name")
-    service = request.form.get("service")
-    date = request.form.get("date")
-    time = request.form.get("time")
+    slot.customer_name = request.form.get("name")
+    slot.customer_email = request.form.get("email")
+    slot.is_booked = True
 
-    # ⚠️ For now we just flash (until model is created)
-    flash("Appointment added (temporary, no DB yet)", "success")
+    db.session.commit()
 
-    return redirect(url_for(
-        "business.staff_dashboard",
-        slug=slug
-    ))
+    flash("Appointment booked!", "success")
+    return redirect(url_for("business.view_slots", slug=slug))
