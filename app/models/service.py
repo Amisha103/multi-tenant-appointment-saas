@@ -22,11 +22,12 @@ class Service(db.Model):
     price = db.Column(db.Integer)
 
     duration = db.Column(db.Integer)
-
+    
     business = db.relationship(
         "Business",
         back_populates="services"
     )
+    master = db.relationship("MasterService", backref="services")
     __table_args__ = (
     db.UniqueConstraint(
         "tenant_id",

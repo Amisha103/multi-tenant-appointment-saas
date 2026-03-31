@@ -8,40 +8,38 @@
 /* Body */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f1e9; /* soft beige */
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: #f5f1e9;
+    padding: 30px;
 }
 
-/* Container wrapper */
-.container {
-    text-align: center;
-}
-
-/* Heading */
+/* Headings */
 h2 {
-    margin-bottom: 15px;
-    color: #2f5d50; /* deep green */
-    font-weight: 600;
+    text-align: center;
+    color: #2f5d50;
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: #2f5d50;
+    margin: 25px 0 10px;
 }
 
 /* Form Card */
 form {
     background: #ffffff;
-    padding: 35px 30px;
+    padding: 25px;
     border-radius: 12px;
-    width: 340px;
+    width: 350px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e6e0d6;
+    margin-bottom: 20px;
 }
 
-/* Inputs */
-input {
+/* Inputs & Select */
+input, select {
     width: 100%;
     padding: 12px;
-    margin: 12px 0;
+    margin: 10px 0;
     border: 1px solid #dcd6cc;
     border-radius: 8px;
     font-size: 14px;
@@ -49,46 +47,85 @@ input {
     transition: 0.3s;
 }
 
-/* Input focus */
-input:focus {
-    border-color: #6a9c89; /* soft green */
+/* Focus */
+input:focus, select:focus {
+    border-color: #6a9c89;
     outline: none;
     box-shadow: 0 0 4px rgba(106, 156, 137, 0.4);
 }
 
 /* Button */
 button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    background: #6a9c89; /* main green */
+    padding: 10px 14px;
+    background: #6a9c89;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 15px;
+    font-size: 14px;
     cursor: pointer;
     transition: 0.3s;
 }
 
-/* Button hover */
 button:hover {
     background: #588f7a;
 }
 
-/* Paragraph */
-p {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #5a5a5a;
+/* SLOT CARDS */
+.card {
+    background: #ffffff;
+    border: 1px solid #e6e0d6;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Links */
-a {
-    color: #6a9c89;
-    text-decoration: none;
-    font-weight: 500;
+/* Available slot */
+.available {
+    border-left: 6px solid #6a9c89;
 }
 
-a:hover {
-    text-decoration: underline;
+/* Booked slot */
+.booked {
+    border-left: 6px solid #c94f4f;
+}
+
+/* Slot text */
+.card b {
+    color: #2f5d50;
+}
+
+/* Action buttons container */
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Update button */
+.update-btn {
+    background: #6a9c89;
+}
+
+.update-btn:hover {
+    background: #588f7a;
+}
+
+/* Delete button */
+.delete-btn {
+    background: #c94f4f;
+}
+
+.delete-btn:hover {
+    background: #a63d3d;
+}
+
+/* Divider */
+hr {
+    margin: 30px 0;
+    border: none;
+    border-top: 1px solid #e0dbd2;
 }

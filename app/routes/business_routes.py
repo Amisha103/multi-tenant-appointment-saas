@@ -600,15 +600,11 @@ def staff_dashboard(slug):
 
     staff = Staff.query.filter_by(id=staff_id, tenant_id=business.id).first_or_404()
 
-    # 🔥 GET SERVICES (for dropdown)
-    services = (
-        db.session.query(Service, MasterService)
-        .join(MasterService, Service.master_service_id == MasterService.id)
-        .filter(Service.tenant_id == business.id)
-        .all()
-    )
+    services = Service.query.filter_by(
+    tenant_id=business.id
+).all()
 
-    # 🔥 CREATE SLOT
+  
     if request.method == "POST":
         time_str = request.form.get("appointment_time")
         service_id = request.form.get("service_id")
@@ -631,9 +627,12 @@ def staff_dashboard(slug):
         return redirect(url_for("business.staff_dashboard", slug=slug))
 
     # 🔥 GET ALL SLOTS
-    appointments = Appointment.query.filter_by(
-        tenant_id=business.id
-    ).order_by(Appointment.time).all()
+    now = datetime.now()
+
+    appointments = Appointment.query.filter(
+    Appointment.tenant_id == business.id,
+    Appointment.time >= now
+).order_by(Appointment.time).all()
 
     return render_template(
         "business/staff/staff_dashboard.html",
@@ -641,7 +640,9 @@ def staff_dashboard(slug):
         business=business,
         services=services,
         appointments=appointments
+        
     )
+
 
 @business_bp.route("/<slug>/admin/add-appointment", methods=["GET", "POST"])
 def add_appointment(slug):
@@ -656,15 +657,27 @@ def add_appointment(slug):
 
     if request.method == "POST":
         time_str = request.form.get("appointment_time")
-        service_id = request.form.get("service_id")
+        service_id = int(request.form.get("service_id"))  # ✅ FIX TYPE
 
-        # Convert string → datetime
         appointment_time = datetime.fromisoformat(time_str)
 
+        # 🔥 CHECK FOR DUPLICATE SLOT (IMPORTANT)
+        existing_slot = Appointment.query.filter_by(
+            tenant_id=business.id,
+            service_id=service_id,
+            time=appointment_time
+        ).first()
+
+        if existing_slot:
+            flash("Slot already exists for this service at this time", "error")
+            return redirect(url_for("business.add_appointment", slug=slug))
+
+        # ✅ CREATE SLOT
         new_appt = Appointment(
             time=appointment_time,
             service_id=service_id,
-            tenant_id=business.id
+            tenant_id=business.id,
+            is_booked=False
         )
 
         db.session.add(new_appt)
@@ -678,8 +691,6 @@ def add_appointment(slug):
         services=services,
         business=business
     )
-
-
 @business_bp.route("/<slug>/book/<int:id>", methods=["POST"])
 def book_slot(slug, id):
 

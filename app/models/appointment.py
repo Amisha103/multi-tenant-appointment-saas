@@ -13,13 +13,14 @@ class Appointment(db.Model):
         nullable=False
     )
 
+    service = db.relationship("Service", backref="appointments")
+
     staff_id = db.Column(
         db.Integer,
         db.ForeignKey("staff.id"),
         nullable=True
     )
 
-    # ✅ THIS IS YOUR BUSINESS LINK
     tenant_id = db.Column(
         db.Integer,
         db.ForeignKey("businesses.id"),

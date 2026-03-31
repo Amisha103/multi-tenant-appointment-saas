@@ -1,4 +1,12 @@
-<h2>Staff Dashboard</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css')}}">
+</head>
+
+<body>
+<h2>Staff Dashboard</>
 
 <h3>Create Available Slot</h3>
 
@@ -7,11 +15,12 @@
     <input type="datetime-local" name="appointment_time" required>
 
     <select name="service_id" required>
-        {% for service, master in services %}
-            <option value="{{ service.id }}">
-                {{ master.name }}
-            </option>
-        {% endfor %}
+         {% for service in services %}
+       
+        <option value="{{ service.id }}">
+    {{ service.master.name }} - ₹{{ service.price }} ({{ service.duration }} mins)
+</option>
+    {% endfor %}
     </select>
 
     <button type="submit">Add Slot</button>
@@ -20,21 +29,39 @@
 <hr>
 
 <h3>Available Slots</h3>
-<ul>
+
 {% for a in appointments %}
     {% if not a.is_booked %}
-        <li>{{ a.time.strftime("%Y-%m-%d %H:%M") }} (Available)</li>
+        <div class="card available">
+            <div>
+                <b>{{ a.time.strftime("%Y-%m-%d %H:%M") }}</b><br>
+                Service: {{ a.service.master.name }}
+            </div>
+
+            <div class="actions">
+                <a href="/update/{{ a.id }}">
+                    <button class="update-btn">Update</button>
+                </a>
+                <a href="/delete/{{ a.id }}">
+                    <button class="delete-btn">Delete</button>
+                </a>
+            </div>
+        </div>
     {% endif %}
 {% endfor %}
-</ul>
 
 <h3>Booked Appointments</h3>
-<ul>
+
 {% for a in appointments %}
     {% if a.is_booked %}
-        <li>
-            {{ a.time.strftime("%Y-%m-%d %H:%M") }} - {{ a.customer_name }} ({{ a.customer_email }})
-        </li>
+        <div class="card booked">
+            <div>
+                <b>{{ a.time.strftime("%Y-%m-%d %H:%M") }}</b><br>
+                Service: {{ a.service.master.name }}<br>
+                {{ a.customer_name }} ({{ a.customer_email }})
+            </div>
+        </div>
     {% endif %}
 {% endfor %}
-</ul
+
+    </body>
