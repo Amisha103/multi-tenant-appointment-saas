@@ -23,7 +23,7 @@
 <ul>
 {% for a in appointments %}
     {% if not a.is_booked %}
-        <li>{{ a.time }} (Available)</li>
+        <li>{{ a.time.strftime("%Y-%m-%d %H:%M") }} (Available)</li>
     {% endif %}
 {% endfor %}
 </ul>
@@ -33,8 +33,8 @@
 {% for a in appointments %}
     {% if a.is_booked %}
         <li>
-            {{ a.time }} - {{ a.customer_name }} ({{ a.customer_email }})
+            {{ a.time.strftime("%Y-%m-%d %H:%M") }} - {{ a.customer_name }} ({{ a.customer_email }})
         </li>
     {% endif %}
 {% endfor %}
-</ul>
+</ul

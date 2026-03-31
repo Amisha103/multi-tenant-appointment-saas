@@ -587,22 +587,18 @@ def set_staff_password(slug, id):
 
     return render_template("business/staff/staff_set_password.html", staff=staff)
 
+
 @business_bp.route("/<slug>/staff/dashboard", methods=["GET", "POST"])
 @jwt_required(locations=["cookies"])
 def staff_dashboard(slug):
-
     business = g.current_business
-
     staff_id = get_jwt_identity()
     claims = get_jwt()
 
     if claims.get("role") != "staff":
         abort(403)
 
-    staff = Staff.query.filter_by(
-        id=staff_id,
-        tenant_id=business.id
-    ).first_or_404()
+    staff = Staff.query.filter_by(id=staff_id, tenant_id=business.id).first_or_404()
 
     # 🔥 GET SERVICES (for dropdown)
     services = (
@@ -614,11 +610,14 @@ def staff_dashboard(slug):
 
     # 🔥 CREATE SLOT
     if request.method == "POST":
-        time = request.form.get("time")
+        time_str = request.form.get("appointment_time")
         service_id = request.form.get("service_id")
 
+        from datetime import datetime
+        time_obj = datetime.fromisoformat(time_str)
+
         slot = Appointment(
-            time=time,
+            time=time_obj,
             service_id=service_id,
             staff_id=staff.id,
             tenant_id=business.id,
@@ -643,7 +642,6 @@ def staff_dashboard(slug):
         services=services,
         appointments=appointments
     )
-
 
 @business_bp.route("/<slug>/admin/add-appointment", methods=["GET", "POST"])
 def add_appointment(slug):
