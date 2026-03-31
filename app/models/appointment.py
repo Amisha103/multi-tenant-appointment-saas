@@ -31,3 +31,12 @@ class Appointment(db.Model):
 
     customer_name = db.Column(db.String(100))
     customer_email = db.Column(db.String(100))
+    __table_args__ = (
+    db.UniqueConstraint(
+        "tenant_id",
+        "staff_id",
+        "service_id",
+        "time",
+        name="unique_slot_per_service_staff_time"
+    ),
+)

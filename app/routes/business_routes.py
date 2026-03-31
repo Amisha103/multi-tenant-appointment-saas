@@ -609,7 +609,7 @@ def staff_dashboard(slug):
         time_str = request.form.get("appointment_time")
         service_id = request.form.get("service_id")
 
-        from datetime import datetime
+        
         time_obj = datetime.fromisoformat(time_str)
 
         slot = Appointment(
@@ -665,6 +665,7 @@ def add_appointment(slug):
         existing_slot = Appointment.query.filter_by(
             tenant_id=business.id,
             service_id=service_id,
+            staff_id=staff.id,    
             time=appointment_time
         ).first()
 
@@ -713,3 +714,68 @@ def book_slot(slug, id):
 
     flash("Appointment booked!", "success")
     return redirect(url_for("business.view_slots", slug=slug))
+
+@business_bp.route("/<slug>/staff/delete-slot/<int:id>", methods=["POST"])
+@jwt_required(locations=["cookies"])
+def delete_slot(slug, id):
+    business = g.current_business
+    staff_id = get_jwt_identity()
+
+    slot = Appointment.query.filter_by(
+        id=id,
+        tenant_id=business.id,
+        staff_id=staff_id
+    ).first_or_404()
+
+    # ❌ Prevent deleting booked slots (important)
+    if slot.is_booked:
+        flash("Cannot delete a booked slot", "error")
+        return redirect(url_for("business.staff_dashboard", slug=slug))
+
+    db.session.delete(slot)
+    db.session.commit()
+
+    flash("Slot deleted successfully", "success")
+    return redirect(url_for("business.staff_dashboard", slug=slug))
+
+@business_bp.route("/<slug>/staff/update-slot/<int:id>", methods=["GET", "POST"])
+@jwt_required(locations=["cookies"])
+def update_slot(slug, id):
+    business = g.current_business
+    staff_id = get_jwt_identity()
+
+    slot = Appointment.query.filter_by(
+        id=id,
+        tenant_id=business.id,
+        staff_id=staff_id
+    ).first_or_404()
+
+    if request.method == "POST":
+        from datetime import datetime
+
+        time_str = request.form.get("appointment_time")
+        new_time = datetime.fromisoformat(time_str)
+
+        # 🔥 CHECK OVERLAP (same service + same staff)
+        existing = Appointment.query.filter_by(
+            tenant_id=business.id,
+            staff_id=staff_id,
+            service_id=slot.service_id,
+            time=new_time
+        ).first()
+
+        if existing and existing.id != slot.id:
+            flash("Time slot overlaps with another slot", "error")
+            return redirect(url_for("business.staff_dashboard", slug=slug))
+
+        slot.time = new_time
+        db.session.commit()
+
+        flash("Slot updated successfully", "success")
+        return redirect(url_for("business.staff_dashboard", slug=slug))
+
+    return render_template(
+        "business/staff/update_slot.html",
+        slot=slot,
+        business=business
+    )

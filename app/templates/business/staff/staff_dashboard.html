@@ -2,31 +2,33 @@
 <html>
 <head>
     <title>Staff Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css') }}">
 </head>
 
 <body>
-<h2>Staff Dashboard</>
+
+<h2>Staff Dashboard</h2>
 
 <h3>Create Available Slot</h3>
 
 <form method="POST">
-      <label>Select Date & Time</label>
+    <label>Select Date & Time</label>
     <input type="datetime-local" name="appointment_time" required>
 
     <select name="service_id" required>
-         {% for service in services %}
-       
-        <option value="{{ service.id }}">
-    {{ service.master.name }} - ₹{{ service.price }} ({{ service.duration }} mins)
-</option>
-    {% endfor %}
+        {% for service in services %}
+            <option value="{{ service.id }}">
+                {{ service.master.name }} - ₹{{ service.price }} ({{ service.duration }} mins)
+            </option>
+        {% endfor %}
     </select>
 
     <button type="submit">Add Slot</button>
 </form>
 
 <hr>
+
+<div id="toast" class="toast"></div>
 
 <h3>Available Slots</h3>
 
@@ -39,12 +41,15 @@
             </div>
 
             <div class="actions">
-                <a href="/update/{{ a.id }}">
+                <!-- ✅ UPDATE BUTTON (goes to update page) -->
+                <a href="{{ url_for('business.update_slot', slug=business.slug, id=a.id) }}">
                     <button class="update-btn">Update</button>
                 </a>
-                <a href="/delete/{{ a.id }}">
+
+                <!-- ✅ DELETE BUTTON -->
+                <form method="POST" action="{{ url_for('business.delete_slot', slug=business.slug, id=a.id) }}">
                     <button class="delete-btn">Delete</button>
-                </a>
+                </form>
             </div>
         </div>
     {% endif %}
@@ -64,4 +69,29 @@
     {% endif %}
 {% endfor %}
 
-    </body>
+<!-- ✅ TOAST MESSAGE -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <script>
+            let toast = document.getElementById("toast");
+
+            {% for category, message in messages %}
+                toast.innerText = "{{ message }}";
+                toast.style.display = "block";
+
+                if ("{{ category }}" === "error") {
+                    toast.style.background = "#c94f4f";
+                } else {
+                    toast.style.background = "#6a9c89";
+                }
+
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 3000);
+            {% endfor %}
+        </script>
+    {% endif %}
+{% endwith %}
+
+</body>
+</html>

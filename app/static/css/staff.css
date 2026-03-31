@@ -129,3 +129,14 @@ hr {
     border: none;
     border-top: 1px solid #e0dbd2;
 }
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #c94f4f;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    display: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
