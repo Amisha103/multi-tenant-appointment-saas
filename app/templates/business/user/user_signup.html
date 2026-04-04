@@ -1,0 +1,31 @@
+{% extends "business/user/user_base.html" %}
+
+{% block title %}Signup - {{ business.name }}{% endblock %}
+
+{% block content %}
+
+<h2>Create an Account for {{ business.name }}</h2>
+
+<form method="POST">
+
+    <label>Name</label>
+    <input type="text" name="name" placeholder="Enter your name" required>
+
+    <label>Email</label>
+    <input type="email" name="email" placeholder="Enter your email" required>
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="Create a password" required>
+
+    <button type="submit">Signup</button>
+
+</form>
+
+<p>
+    Already have an account?
+    <a href="{{ url_for('business.user_login', slug=business.slug) }}">
+        Login here
+    </a>
+</p>
+
+{% endblock %}
