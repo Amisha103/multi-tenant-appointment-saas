@@ -1,34 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ business.name }} - User Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
-</head>
-<body>
+{% extends "business/user/user_base.html" %}
 
-<div class="auth-container">
-    <h2>{{ business.name }} - User Login</h2>
+{% block title %}Login - {{ business.name }}{% endblock %}
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="flash-message">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+{% block content %}
 
-    <form method="POST">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
+<h2>Login to {{ business.name }}</h2>
 
-    <a href="{{ url_for('business.user_register', slug=business.slug) }}">
-        New user? Create Account
+<form method="POST">
+
+    <label>Email</label>
+    <input type="email" name="email" placeholder="Enter your email" required>
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="Enter your password" required>
+
+    <button type="submit">Login</button>
+
+</form>
+
+<p>
+    Don't have an account?
+    <a href="{{ url_for('business.user_signup', slug=business.slug) }}">
+        Signup here
     </a>
-</div>
+</p>
 
-</body>
-</html>
+{% endblock %}

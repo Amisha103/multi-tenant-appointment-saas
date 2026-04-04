@@ -17,12 +17,20 @@ class User(UserMixin, db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # 🔗 Mapping relationship (User ↔ BusinessUser)
-    business_links = db.relationship(
+    # Relationship with BusinessUser
+    businesses = db.relationship(
         "BusinessUser",
         back_populates="user",
         cascade="all, delete-orphan"
     )
+
+
+    businesses = db.relationship(
+        "Business",
+        secondary="business_users",
+        viewonly=True
+    )
+
 
     # 🔥 Direct access to businesses (very useful)
     businesses = db.relationship(
