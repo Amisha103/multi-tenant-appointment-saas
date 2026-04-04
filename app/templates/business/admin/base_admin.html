@@ -2,45 +2,8 @@
 <html>
 <head>
     <title>Admin Panel</title>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #f5f7fb;
-        }
-
-        /* NAVBAR */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #111827;
-            color: white;
-            padding: 14px 25px;
-        }
-
-        .navbar .left {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .navbar .right a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 14px;
-        }
-
-        .navbar .right a:hover {
-            text-decoration: underline;
-        }
-
-        /* PAGE CONTENT */
-        .content {
-            padding: 30px;
-        }
-    </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+   
 </head>
 
 <body>

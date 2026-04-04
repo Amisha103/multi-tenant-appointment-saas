@@ -6,9 +6,7 @@
 
 <h2>Welcome, {{ user.name }} 👋</h2>
 
-<!-- ========================= -->
-<!-- AVAILABLE APPOINTMENTS -->
-<!-- ========================= -->
+
 <h3>Available Appointments</h3>
 
 {% if available_slots %}
@@ -22,7 +20,8 @@
         {% for slot in available_slots %}
         <tr>
             <td>{{ slot.time }}</td>
-            <td>{{ slot.service_id }}</td>
+        <td>{{ slot.service.master.name }}</td>
+        <td>{{ slot.service.price }}</td>
             <td>
                 <form method="POST" action="{{ url_for('business.book_slot', slug=business.slug, id=slot.id) }}">
                     <button type="submit">Book</button>
@@ -38,9 +37,7 @@
 
 <br><br>
 
-<!-- ========================= -->
-<!-- MY BOOKINGS -->
-<!-- ========================= -->
+
 <h3>My Booked Appointments</h3>
 
 {% if my_appointments %}
@@ -54,7 +51,8 @@
         {% for slot in my_appointments %}
         <tr>
             <td>{{ slot.time }}</td>
-            <td>{{ slot.service_id }}</td>
+            <td>{{ slot.service.master.name }}</td>
+        <td>{{ slot.service.price }}</td>
             <td>
                 <form method="POST" action="{{ url_for('business.cancel_appointment', slug=business.slug, id=slot.id) }}">
                     <button type="submit" style="background-color:red;">Cancel</button>

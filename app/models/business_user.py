@@ -10,7 +10,8 @@ class BusinessUser(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     business_id = db.Column(db.Integer, db.ForeignKey("businesses.id"), nullable=False)
-
+    role = db.Column(db.String(50), nullable=True, default="customer") 
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     

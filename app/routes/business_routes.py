@@ -83,9 +83,7 @@ def business_home(slug):
     )
 
 
-# -----------------------------
-# ADMIN LOGIN
-# -----------------------------
+
 @business_bp.route("/<slug>/admin/login", methods=["GET", "POST"])
 def admin_login(slug):
 
@@ -112,7 +110,7 @@ def admin_login(slug):
                     identity=str(user.id),
                     additional_claims={
                         "business_id": business.id,
-                        "role": "admin"
+                        "role":"admin"
                     }
                 )
 
@@ -132,9 +130,7 @@ def admin_login(slug):
     )
 
 
-# -----------------------------
-# ADMIN DASHBOARD
-# -----------------------------
+
 @business_bp.route("/<slug>/admin/dashboard")
 @jwt_required(locations=["cookies"])
 def admin_dashboard(slug):
@@ -156,9 +152,7 @@ def admin_dashboard(slug):
     )
 
 
-# -----------------------------
-# ADMIN SERVICES PAGE
-# -----------------------------
+
 @business_bp.route("/<slug>/admin/services", methods=["GET","POST"])
 @jwt_required(locations=["cookies"])
 def admin_services(slug):
@@ -231,9 +225,6 @@ def admin_services(slug):
     )
 
 
-# -----------------------------
-# UPDATE SERVICE
-# -----------------------------
 @business_bp.route("/<slug>/admin/service/update/<int:id>", methods=["POST"])
 @jwt_required(locations=["cookies"])
 def update_service(slug, id):
@@ -253,9 +244,7 @@ def update_service(slug, id):
     ))
 
 
-# -----------------------------
-# DELETE SERVICE
-# -----------------------------
+
 @business_bp.route("/<slug>/admin/service/delete/<int:id>")
 @jwt_required(locations=["cookies"])
 def delete_service(slug, id):
@@ -273,31 +262,10 @@ def delete_service(slug, id):
     ))
 
 
-# -----------------------------
-# BOOK APPOINTMENT
-# -----------------------------
-@business_bp.route("/<slug>/book")
-def book_appointment(slug):
-
-    business = Business.query.filter_by(slug=slug).first_or_404()
-
-    services = (
-        db.session.query(Service, MasterService)
-        .join(MasterService, Service.master_service_id == MasterService.id)
-        .filter(Service.tenant_id == business.id)
-        .all()
-    )
-
-    return render_template(
-        "business/book_appointment.html",
-        business=business,
-        services=services
-    )
 
 
-# -----------------------------
-# LOGOUT
-# -----------------------------
+
+
 @business_bp.route("/<slug>/logout")
 def logout(slug):
 
@@ -325,61 +293,16 @@ def get_business(endpoint, values):
         g.current_business = business
 
 
-@business_bp.route("/<slug>/user/login", methods=["GET", "POST"])
-def user_login(slug):
-    business = g.current_business
-
-    if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
-
-        user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):
-            business_user = BusinessUser.query.filter_by(
-                user_id=user.id,
-                business_id=business.id
-            ).first()
-
-            if not business_user:
-                business_user = BusinessUser(
-                    user_id=user.id,
-                    business_id=business.id,
-                    role="customer"
-                )
-                db.session.add(business_user)
-                db.session.commit()
-
-            access_token = create_access_token(
-                identity=str(user.id),
-                additional_claims={
-                    "business_id": business.id,
-                    "role": "customer"
-                }
-            )
-
-            response = make_response(
-                redirect(url_for("business.user_dashboard", slug=slug))
-            )
-            set_access_cookies(response, access_token)
-            return response
-
-        flash("Invalid email or password", "error")
-
-    return render_template(
-        "business/user/user_login.html",
-        business=business
-    )
-
 
 @business_bp.route("/<slug>/admin/services/save", methods=["POST"])
 @jwt_required(locations=["cookies"])
 def save_service(slug):
     business = g.current_business
 
-    # Get selected services from checkboxes
+    
     selected_services = request.form.getlist("services")
 
-    # Get "Other Service" input if provided
+    
     other_service = request.form.get("other_service")
 
     if other_service and other_service.strip():
@@ -391,7 +314,7 @@ def save_service(slug):
         db.session.commit()
         selected_services.append(str(new_master.id))
 
-    # Add selected services to this business
+   
     for service_id in selected_services:
         existing_service = Service.query.filter_by(
             tenant_id=business.id,
@@ -501,7 +424,7 @@ def staff_login(slug):
                 identity=str(staff.id),
                 additional_claims={
                     "tenant_id": business.id,
-                    "role": "staff"
+                    "role":"staff"
                 }
             )
 
@@ -787,7 +710,8 @@ def user_signup(slug):
     
         existing_link = BusinessUser.query.filter_by(
             user_id=user.id,
-            business_id=business.id
+            business_id=business.id,
+              role="customer"  
         ).first()
 
 
@@ -804,7 +728,8 @@ def user_signup(slug):
         access_token = create_access_token(
             identity=str(user.id),
             additional_claims={
-                "business_id": business.id
+                "business_id": business.id,
+                "role": "customer"
             }
         )
 
@@ -820,13 +745,10 @@ def user_signup(slug):
         "business/user/user_signup.html",
         business=business
     )
-
 @business_bp.route("/<slug>/user/dashboard")
 @jwt_required(locations=["cookies"])
 def user_dashboard(slug):
-
     business = g.current_business
-
     user_id = get_jwt_identity()
     claims = get_jwt()
 
@@ -835,18 +757,32 @@ def user_dashboard(slug):
 
     user = User.query.get(user_id)
 
-    # ✅ AVAILABLE SLOTS (only not booked)
-    available_slots = Appointment.query.filter_by(
-        tenant_id=business.id,
-        is_booked=False
-    ).order_by(Appointment.time).all()
+    # Fetch available appointments with Service + MasterService
+    available_slots = (
+        Appointment.query
+        .join(Service, Appointment.service_id == Service.id)
+        .join(MasterService, Service.master_service_id == MasterService.id)
+        .filter(
+            Appointment.tenant_id == business.id,
+            Appointment.is_booked == False
+        )
+        .order_by(Appointment.time)
+        .all()
+    )
 
-    # ✅ USER BOOKINGS
-    my_appointments = Appointment.query.filter_by(
-        tenant_id=business.id,
-        customer_email=user.email,
-        is_booked=True
-    ).order_by(Appointment.time).all()
+    # Fetch user's booked appointments
+    my_appointments = (
+        Appointment.query
+        .join(Service, Appointment.service_id == Service.id)
+        .join(MasterService, Service.master_service_id == MasterService.id)
+        .filter(
+            Appointment.tenant_id == business.id,
+            Appointment.customer_email == user.email,
+            Appointment.is_booked == True
+        )
+        .order_by(Appointment.time)
+        .all()
+    )
 
     return render_template(
         "business/user/user_dashboard.html",
@@ -855,6 +791,7 @@ def user_dashboard(slug):
         available_slots=available_slots,
         my_appointments=my_appointments
     )
+
 @business_bp.route("/<slug>/book/<int:id>", methods=["POST"])
 @jwt_required(locations=["cookies"])
 def book_slot(slug, id):
@@ -907,3 +844,52 @@ def cancel_appointment(slug, id):
     flash("Appointment cancelled", "success")
     return redirect(url_for("business.user_dashboard", slug=slug))
 
+
+
+@business_bp.route("/<slug>/user/login", methods=["GET", "POST"])
+def user_login(slug):
+    business = g.current_business 
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        
+        user = User.query.filter_by(email=email).first()
+        if not user or not user.check_password(password):
+            flash("Invalid email or password", "error")
+            return redirect(url_for("business.user_login", slug=slug))
+
+       
+        link = BusinessUser.query.filter_by(
+            user_id=user.id,
+            business_id=business.id
+        ).first()
+
+        if not link:
+            link = BusinessUser(
+                user_id=user.id,
+                business_id=business.id,
+                  role="customer"  
+            )
+            db.session.add(link)
+            db.session.commit()
+
+       
+        access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={"business_id": business.id, "role": "customer"}
+        )
+
+       
+        response = make_response(redirect(url_for("business.user_dashboard", slug=slug)))
+        set_access_cookies(response, access_token)
+
+        flash("Logged in successfully!", "success")
+        return response
+
+    
+    return render_template(
+        "business/user/user_login.html",
+        business=business
+    )
