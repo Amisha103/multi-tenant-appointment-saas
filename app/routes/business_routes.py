@@ -693,9 +693,12 @@ def add_appointment(slug):
         business=business
     )
 @business_bp.route("/<slug>/book/<int:id>", methods=["POST"])
+@jwt_required(locations=["cookies"])
 def book_slot(slug, id):
 
     business = g.current_business
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
 
     slot = Appointment.query.filter_by(
         id=id,
@@ -704,16 +707,16 @@ def book_slot(slug, id):
 
     if slot.is_booked:
         flash("Slot already booked", "error")
-        return redirect(url_for("business.view_slots", slug=slug))
+        return redirect(url_for("business.user_dashboard", slug=slug))
 
-    slot.customer_name = request.form.get("name")
-    slot.customer_email = request.form.get("email")
+    slot.customer_name = user.name
+    slot.customer_email = user.email
     slot.is_booked = True
 
     db.session.commit()
 
-    flash("Appointment booked!", "success")
-    return redirect(url_for("business.view_slots", slug=slug))
+    flash("Appointment booked successfully!", "success")
+    return redirect(url_for("business.user_dashboard", slug=slug))
 
 @business_bp.route("/<slug>/staff/delete-slot/<int:id>", methods=["POST"])
 @jwt_required(locations=["cookies"])
@@ -778,4 +781,63 @@ def update_slot(slug, id):
         "business/staff/update_slot.html",
         slot=slot,
         business=business
+    )
+
+@business_bp.route("/<slug>/cancel/<int:id>", methods=["POST"])
+@jwt_required(locations=["cookies"])
+def cancel_appointment(slug, id):
+
+    business = g.current_business
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    slot = Appointment.query.filter_by(
+        id=id,
+        tenant_id=business.id,
+        customer_email=user.email
+    ).first_or_404()
+
+    # Reset slot
+    slot.is_booked = False
+    slot.customer_name = None
+    slot.customer_email = None
+
+    db.session.commit()
+
+    flash("Appointment cancelled", "success")
+    return redirect(url_for("business.user_dashboard", slug=slug))
+
+@business_bp.route("/<slug>/user/dashboard")
+@jwt_required(locations=["cookies"])
+def user_dashboard(slug):
+
+    business = g.current_business
+
+    user_id = get_jwt_identity()
+    claims = get_jwt()
+
+    if claims.get("role") != "customer":
+        abort(403)
+
+    user = User.query.get(user_id)
+
+    # ✅ AVAILABLE SLOTS (only not booked)
+    available_slots = Appointment.query.filter_by(
+        tenant_id=business.id,
+        is_booked=False
+    ).order_by(Appointment.time).all()
+
+    # ✅ USER BOOKINGS
+    my_appointments = Appointment.query.filter_by(
+        tenant_id=business.id,
+        customer_email=user.email,
+        is_booked=True
+    ).order_by(Appointment.time).all()
+
+    return render_template(
+        "business/user/user_dashboard.html",
+        business=business,
+        user=user,
+        available_slots=available_slots,
+        my_appointments=my_appointments
     )
