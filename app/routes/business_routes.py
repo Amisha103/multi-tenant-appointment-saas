@@ -692,31 +692,7 @@ def add_appointment(slug):
         services=services,
         business=business
     )
-@business_bp.route("/<slug>/book/<int:id>", methods=["POST"])
-@jwt_required(locations=["cookies"])
-def book_slot(slug, id):
 
-    business = g.current_business
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-
-    slot = Appointment.query.filter_by(
-        id=id,
-        tenant_id=business.id
-    ).first_or_404()
-
-    if slot.is_booked:
-        flash("Slot already booked", "error")
-        return redirect(url_for("business.user_dashboard", slug=slug))
-
-    slot.customer_name = user.name
-    slot.customer_email = user.email
-    slot.is_booked = True
-
-    db.session.commit()
-
-    flash("Appointment booked successfully!", "success")
-    return redirect(url_for("business.user_dashboard", slug=slug))
 
 @business_bp.route("/<slug>/staff/delete-slot/<int:id>", methods=["POST"])
 @jwt_required(locations=["cookies"])
@@ -803,6 +779,10 @@ def user_signup(slug):
             )
             db.session.add(user)
             db.session.commit()
+            return render_template(
+        "business/user/user_login.html",
+        business=business
+       )
 
     
         existing_link = BusinessUser.query.filter_by(
@@ -810,11 +790,12 @@ def user_signup(slug):
             business_id=business.id
         ).first()
 
+
         if not existing_link:
             link = BusinessUser(
                 user_id=user.id,
-                business_id=business.id,
-                role="customer"
+                business_id=business.id
+                
             )
             db.session.add(link)
             db.session.commit()
@@ -823,8 +804,7 @@ def user_signup(slug):
         access_token = create_access_token(
             identity=str(user.id),
             additional_claims={
-                "business_id": business.id,
-                "role": "customer"
+                "business_id": business.id
             }
         )
 
@@ -833,6 +813,7 @@ def user_signup(slug):
         )
 
         set_access_cookies(response, access_token)
+
         return response
 
     return render_template(
@@ -891,7 +872,7 @@ def book_slot(slug, id):
         flash("Slot already booked", "error")
         return redirect(url_for("business.user_dashboard", slug=slug))
 
-    # ✅ Assign booking
+  
     slot.customer_name = user.name
     slot.customer_email = user.email
     slot.is_booked = True
@@ -900,6 +881,7 @@ def book_slot(slug, id):
 
     flash("Appointment booked successfully!", "success")
     return redirect(url_for("business.user_dashboard", slug=slug))
+
 
 @business_bp.route("/<slug>/cancel/<int:id>", methods=["POST"])
 @jwt_required(locations=["cookies"])
@@ -924,3 +906,4 @@ def cancel_appointment(slug, id):
 
     flash("Appointment cancelled", "success")
     return redirect(url_for("business.user_dashboard", slug=slug))
+

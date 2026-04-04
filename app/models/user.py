@@ -17,8 +17,8 @@ class User(UserMixin, db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationship with BusinessUser
-    businesses = db.relationship(
+ 
+    business_links = db.relationship(
         "BusinessUser",
         back_populates="user",
         cascade="all, delete-orphan"
@@ -32,14 +32,7 @@ class User(UserMixin, db.Model):
     )
 
 
-    # 🔥 Direct access to businesses (very useful)
-    businesses = db.relationship(
-        "Business",
-        secondary="business_users",
-        viewonly=True
-    )
-
-    # 🔐 Password methods
+  
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
