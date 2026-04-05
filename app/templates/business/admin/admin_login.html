@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Login - {{ business.name }}</title>
- <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-</head>
-<body>
+{% extends "business/admin/base_admin.html" %}
+{% block content %}
+
+<body class="login-page">
 
 <div class="login-card">
+
     <h2>{{ business.name }} Admin Login</h2>
+
+    <p class="login-subtitle">
+        Login to manage your business dashboard
+    </p>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -24,7 +26,8 @@
         <input type="password" name="password" placeholder="Enter Password" required>
         <button type="submit">Login</button>
     </form>
+
 </div>
 
 </body>
-</html>
+{% endblock %}

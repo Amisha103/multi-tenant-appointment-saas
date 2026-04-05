@@ -1,523 +1,81 @@
-
+/* ================= GLOBAL ================= */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f5f7fb;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f7f5ef; /* beige theme */
 }
 
+/* ================= ADMIN PAGE ================= */
+.admin-page {
+    height: 100vh;
+    overflow: hidden;
+}
 
+/* ================= LOGIN PAGE ================= */
 .login-page {
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
-
+/* ================= LOGIN CARD ================= */
 .login-card {
     background: white;
-    padding: 40px;
-    width: 350px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 40px 30px;
+    width: 360px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    text-align: center;
 }
 
 .login-card h2 {
-    text-align: center;
+    margin-bottom: 10px;
+    color: #1f3d36;
+}
+
+.login-subtitle {
+    font-size: 13px;
+    color: #6b7280;
     margin-bottom: 20px;
 }
 
 .login-card input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
-    border-radius: 5px;
+    border-radius: 8px;
     border: 1px solid #ddd;
+}
+
+.login-card input:focus {
+    border-color: #1f3d36;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(31,61,54,0.15);
 }
 
 .login-card button {
     width: 100%;
-    padding: 10px;
-    background: #4f46e5;
+    padding: 12px;
+    background: #1f3d36;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
 .login-card button:hover {
-    background: #4338ca;
+    background: #162f2a;
 }
 
+/* ================= FLASH ================= */
 .flash {
-    color: red;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-
-.admin-container {
-    display: flex;
-    height: 100vh;
-}
-
-
-.sidebar {
-    width: 230px;
-    background-color: #1f3d36;
-    color: white;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar h2 {
-    margin-bottom: 30px;
-}
-
-.sidebar a {
-    color: #e6efe9;
-    text-decoration: none;
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px;
+    border-radius: 6px;
     margin-bottom: 15px;
-    font-size: 15px;
-    transition: 0.2s;
-}
-
-.sidebar a:hover {
-    color: #6fae99;
-}
-
-
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #111827;
-    color: white;
-    padding: 15px 25px;
-}
-
-.navbar .right a {
-    color: white;
-    text-decoration: none;
-    margin-left: 20px;
-}
-
-.navbar .right a:hover {
-    text-decoration: underline;
-}
-
-
-.content {
-    padding: 30px;
-}
-
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.card h3 {
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.card p {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-/* ================= PAGE ================= */
-.page-header {
-    margin-bottom: 25px;
-}
-
-.page-title {
-    font-size: 24px;
-    font-weight: 700;
-}
-
-/* ================= CARD ================= */
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    margin-bottom: 30px;
-}
-
-/* ================= TABLE ================= */
-.services-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-}
-
-.services-table th {
-    background: #111827;
-    color: white;
-    padding: 14px;
-    border: 1px solid #374151;
-    text-align: left;
-}
-
-.services-table td {
-    padding: 14px;
-    border: 1px solid #ddd;
-}
-
-.services-table tr:nth-child(even) {
-    background: #f9fafb;
-}
-
-.services-table tr:hover {
-    background: #eef2ff;
-}
-
-/* ================= INPUT ================= */
-.services-table input {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-/* ================= BUTTONS ================= */
-.update-btn {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-right: 5px;
-}
-
-.update-btn:hover {
-    background: #1d4ed8;
-}
-
-.delete-btn {
-    background: #dc2626;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.delete-btn:hover {
-    background: #b91c1c;
-}
-
-/* ================= GRID ================= */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.service-card {
-    background: #f9fafb;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: 0.2s;
-}
-
-.service-card:hover {
-    background: #eef2ff;
-}
-
-/* ================= OTHER INPUT ================= */
-.other-input {
-    margin-top: 20px;
-}
-
-.other-input input {
-    width: 300px;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-/* ================= SUBMIT ================= */
-.submit-btn {
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: #16a34a;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.submit-btn:hover {
-    background: #15803d;
-}
-
-.charts {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.chart-box {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-/* ================= PAGE ================= */
-.content {
-    padding: 30px 40px;
-    background: #f5f7fb;
-    min-height: 100vh;
-}
-
-/* ================= HEADER ================= */
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.page-title {
-    font-size: 26px;
-    font-weight: 700;
-}
-
-/* ================= STATS ================= */
-.stats {
-    display: flex;
-    gap: 20px;
-}
-
-.stat-card {
-    background: white;
-    padding: 15px 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    min-width: 140px;
-}
-
-.stat-title {
-    font-size: 12px;
-    color: #6b7280;
-}
-
-.stat-value {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* ================= SECTIONS ================= */
-.section {
-    margin-top: 30px;
-}
-
-.section-card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.section-header h2 {
-    font-size: 18px;
-}
-
-/* ================= TABLE ================= */
-.table-container {
-    overflow-x: auto;
-}
-
-.appointments-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    border: 1px solid #ddd;
-}
-
-/* HEADER */
-.appointments-table th {
-    background: #111827;
-    color: white;
-    padding: 14px;
-    border: 1px solid #374151;
-    text-align: left;
-}
-
-/* CELLS */
-.appointments-table td {
-    padding: 14px;
-    border: 1px solid #ddd;
-}
-
-/* STRIPES */
-.appointments-table tr:nth-child(even) {
-    background: #f9fafb;
-}
-
-/* HOVER */
-.appointments-table tr:hover {
-    background: #eef2ff;
-}
-
-/* ================= BADGES ================= */
-.badge {
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-booked {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.badge-available {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-/* ================= CUSTOMER ================= */
-.customer-name {
-    font-weight: 600;
-}
-
-.customer-email {
-    font-size: 12px;
-    color: #6b7280;
-}
-/* ================= PAGE ================= */
-.page-header {
-    margin-bottom: 25px;
-}
-
-.page-title {
-    font-size: 24px;
-    font-weight: 700;
-}
-
-/* ================= CARD ================= */
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    margin-bottom: 30px;
-}
-
-/* ================= FORM ================= */
-.form-inline {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.form-inline input {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 250px;
-}
-
-.form-inline button {
-    padding: 10px 16px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.form-inline button:hover {
-    background: #1d4ed8;
-}
-
-/* ================= TABLE ================= */
-.staff-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-}
-
-.staff-table th {
-    background: #111827;
-    color: white;
-    padding: 14px;
-    border: 1px solid #374151;
-    text-align: left;
-}
-
-.staff-table td {
-    padding: 14px;
-    border: 1px solid #ddd;
-}
-
-.staff-table tr:nth-child(even) {
-    background: #f9fafb;
-}
-
-.staff-table tr:hover {
-    background: #eef2ff;
-}
-
-/* ================= STATUS BADGES ================= */
-.badge {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-active {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.badge-pending {
-    background: #fef3c7;
-    color: #92400e;
-}
-/* ================= GLOBAL ================= */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #f5f7fb;
+    font-size: 13px;
 }
 
 /* ================= LAYOUT ================= */
@@ -529,24 +87,22 @@ body {
 /* ================= SIDEBAR ================= */
 .sidebar {
     width: 240px;
-    background: #111827; /* dark premium */
+    background: #1f3d36;
     color: white;
     padding: 25px 20px;
     display: flex;
     flex-direction: column;
 }
 
-/* BUSINESS NAME */
 .sidebar h2 {
     font-size: 20px;
     margin-bottom: 30px;
-    border-bottom: 1px solid #374151;
+    border-bottom: 1px solid #2b5248;
     padding-bottom: 10px;
 }
 
-/* LINKS */
 .sidebar a {
-    color: #d1d5db;
+    color: #e6efe9;
     text-decoration: none;
     padding: 10px 12px;
     border-radius: 6px;
@@ -555,19 +111,16 @@ body {
     font-size: 14px;
 }
 
-/* HOVER EFFECT */
 .sidebar a:hover {
-    background: #1f2937;
+    background: #2b5248;
     color: white;
 }
 
-/* ACTIVE LINK (optional class later) */
 .sidebar a.active {
-    background: #2563eb;
-    color: white;
+    background: #6fae99;
+    color: #1f3d36;
 }
 
-/* PUSH LOGOUT DOWN */
 .sidebar a:last-child {
     margin-top: auto;
     background: #dc2626;
@@ -585,12 +138,252 @@ body {
     overflow-y: auto;
 }
 
-/* ================= SCROLLBAR (OPTIONAL PREMIUM TOUCH) ================= */
-.main-content::-webkit-scrollbar {
-    width: 6px;
+/* ================= PAGE HEADER ================= */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.main-content::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 10px;
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* ================= CONTENT ================= */
+.content {
+    padding: 20px;
+}
+
+/* ================= CARDS ================= */
+.card,
+.section-card,
+.chart-box,
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+/* ================= STATS ================= */
+.stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-title {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* ================= TABLE COMMON ================= */
+.services-table,
+.staff-table,
+.appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+.services-table th,
+.staff-table th,
+.appointments-table th {
+    background: #1f3d36;
+    color: white;
+    padding: 14px;
+    border: 1px solid #2b5248;
+    text-align: left;
+}
+
+.services-table td,
+.staff-table td,
+.appointments-table td {
+    padding: 14px;
+    border: 1px solid #ddd;
+}
+
+.services-table tr:nth-child(even),
+.staff-table tr:nth-child(even),
+.appointments-table tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.services-table tr:hover,
+.staff-table tr:hover,
+.appointments-table tr:hover {
+    background: #edf7f4;
+}
+
+/* ================= INPUT ================= */
+input[type="number"],
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+input:focus {
+    border-color: #1f3d36;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(31,61,54,0.15);
+}
+
+/* ================= BUTTONS ================= */
+.update-btn,
+.submit-btn {
+    background: #1f3d36;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.update-btn:hover,
+.submit-btn:hover {
+    background: #162f2a;
+}
+
+.delete-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+}
+
+/* ================= GRID ================= */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.service-card {
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.service-card:hover {
+    background: #edf7f4;
+}
+
+/* ================= FORM INLINE ================= */
+.form-inline {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* ================= BADGES ================= */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-booked,
+.badge-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-available,
+.badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* ================= CUSTOMER ================= */
+.customer-name {
+    font-weight: 600;
+}
+
+.customer-email {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* ================= CHARTS ================= */
+.charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.chart-box {
+    padding: 20px;
+}
+/* ================= NAVBAR ================= */
+.navbar {
+    height: 60px;
+    background: #1f3d36; /* theme green */
+    color: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 30px;
+    border-bottom: 1px solid #2b5248;
+
+    position: sticky;   /* 🔥 stays on top */
+    top: 0;
+    z-index: 1000;
+}
+
+/* LEFT SIDE */
+.navbar .left {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* RIGHT LINKS */
+.navbar .right {
+    display: flex;
+    gap: 20px;
+}
+
+.navbar .right a {
+    color: #e6efe9;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+/* HOVER EFFECT */
+.navbar .right a:hover {
+    background: #2b5248;
+    color: white;
+}
+
+/* ACTIVE LINK (optional enhancement) */
+.navbar .right a.active {
+    background: #6fae99;
+    color: #1f3d36;
 }
