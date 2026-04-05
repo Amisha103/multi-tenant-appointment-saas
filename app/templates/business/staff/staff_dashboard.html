@@ -5,103 +5,132 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css') }}">
 </head>
 
-<body>
+<body class="staff-page">
 
-<nav style="background-color: #2c3e50; padding: 10px; color: white; display: flex; justify-content: space-between; align-items: center;">
-   
-    <div>
-        <a href="{{ url_for('business.business_home', slug=business.slug) }}" style="color: white; text-decoration: none; font-weight: bold; font-size: 16px;">Home</a>
+<!-- NAVBAR -->
+<div class="staff-navbar">
+    <div class="nav-left">
+        {{ business.name }} Staff
     </div>
 
-  
-    <div>
-        <a href="{{ url_for('business.business_home', slug=business.slug) }}" style="color: white; text-decoration: none; font-weight: bold; font-size: 16px;">Logout</a>
+    <div class="nav-right">
+        <a href="{{ url_for('business.business_home', slug=business.slug) }}">Home</a>
+        <a href="{{ url_for('business.business_home', slug=business.slug) }}">Logout</a>
     </div>
-</nav>
-<h2>Staff Dashboard</h2>
+</div>
 
-<h3>Create Available Slot</h3>
+<!-- MAIN CONTENT -->
+<div class="staff-container">
 
-<form method="POST">
-    <label>Select Date & Time</label>
-    <input type="datetime-local" name="appointment_time" required>
+    <h2 class="page-title">Dashboard</h2>
 
-    <select name="service_id" required>
-        {% for service in services %}
-            <option value="{{ service.id }}">
-                {{ service.master.name }} - ₹{{ service.price }} ({{ service.duration }} mins)
-            </option>
+    <!-- CREATE SLOT -->
+    <div class="card form-card">
+        <h3>Create Available Slot</h3>
+
+        <form method="POST" class="slot-form">
+
+            <div class="form-group">
+                <label>Select Date & Time</label>
+                <input type="datetime-local" name="appointment_time" required>
+            </div>
+
+            <div class="form-group">
+                <label>Select Service</label>
+                <select name="service_id" required>
+                    {% for service in services %}
+                        <option value="{{ service.id }}">
+                            {{ service.master.name }} - ₹{{ service.price }} ({{ service.duration }} mins)
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="primary-btn">Add Slot</button>
+        </form>
+    </div>
+
+    <!-- AVAILABLE SLOTS -->
+    <div class="section">
+        <h3>Available Slots</h3>
+
+        <div class="cards-grid">
+        {% for a in appointments %}
+            {% if not a.is_booked %}
+                <div class="card slot-card available">
+
+                    <div class="slot-info">
+                        <b>{{ a.time.strftime("%Y-%m-%d %H:%M") }}</b>
+                        <p>{{ a.service.master.name }}</p>
+                    </div>
+
+                    <div class="actions">
+                        <a href="{{ url_for('business.update_slot', slug=business.slug, id=a.id) }}">
+                            <button class="update-btn">Update</button>
+                        </a>
+
+                        <form method="POST" action="{{ url_for('business.delete_slot', slug=business.slug, id=a.id) }}">
+                            <button class="delete-btn">Delete</button>
+                        </form>
+                    </div>
+
+                </div>
+            {% endif %}
         {% endfor %}
-    </select>
+        </div>
+    </div>
 
-    <button type="submit">Add Slot</button>
-</form>
+    <!-- BOOKED SLOTS -->
+    <div class="section">
+        <h3>Booked Appointments</h3>
 
-<hr>
+        <div class="cards-grid">
+        {% for a in appointments %}
+            {% if a.is_booked %}
+                <div class="card slot-card booked">
 
+                    <div class="slot-info">
+                        <b>{{ a.time.strftime("%Y-%m-%d %H:%M") }}</b>
+                        <p>{{ a.service.master.name }}</p>
+
+                        <div class="customer">
+                            {{ a.customer_name }}<br>
+                            <span>{{ a.customer_email }}</span>
+                        </div>
+                    </div>
+
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<!-- TOAST -->
 <div id="toast" class="toast"></div>
 
-<h3>Available Slots</h3>
-
-{% for a in appointments %}
-    {% if not a.is_booked %}
-        <div class="card available">
-            <div>
-                <b>{{ a.time.strftime("%Y-%m-%d %H:%M") }}</b><br>
-                Service: {{ a.service.master.name }}
-            </div>
-
-            <div class="actions">
-                <!-- ✅ UPDATE BUTTON (goes to update page) -->
-                <a href="{{ url_for('business.update_slot', slug=business.slug, id=a.id) }}">
-                    <button class="update-btn">Update</button>
-                </a>
-
-                <!-- ✅ DELETE BUTTON -->
-                <form method="POST" action="{{ url_for('business.delete_slot', slug=business.slug, id=a.id) }}">
-                    <button class="delete-btn">Delete</button>
-                </form>
-            </div>
-        </div>
-    {% endif %}
-{% endfor %}
-
-<h3>Booked Appointments</h3>
-
-{% for a in appointments %}
-    {% if a.is_booked %}
-        <div class="card booked">
-            <div>
-                <b>{{ a.time.strftime("%Y-%m-%d %H:%M") }}</b><br>
-                Service: {{ a.service.master.name }}<br>
-                {{ a.customer_name }} ({{ a.customer_email }})
-            </div>
-        </div>
-    {% endif %}
-{% endfor %}
-
-<!-- ✅ TOAST MESSAGE -->
 {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <script>
-            let toast = document.getElementById("toast");
+{% if messages %}
+<script>
+let toast = document.getElementById("toast");
 
-            {% for category, message in messages %}
-                toast.innerText = "{{ message }}";
-                toast.style.display = "block";
+{% for category, message in messages %}
+    toast.innerText = "{{ message }}";
+    toast.style.display = "block";
 
-                if ("{{ category }}" === "error") {
-                    toast.style.background = "#c94f4f";
-                } else {
-                    toast.style.background = "#6a9c89";
-                }
+    if ("{{ category }}" === "error") {
+        toast.style.background = "#dc2626";
+    } else {
+        toast.style.background = "#16a34a";
+    }
 
-                setTimeout(() => {
-                    toast.style.display = "none";
-                }, 3000);
-            {% endfor %}
-        </script>
-    {% endif %}
+    setTimeout(() => {
+        toast.style.display = "none";
+    }, 3000);
+{% endfor %}
+</script>
+{% endif %}
 {% endwith %}
 
 </body>

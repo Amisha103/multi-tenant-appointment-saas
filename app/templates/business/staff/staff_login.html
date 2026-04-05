@@ -4,25 +4,30 @@
     <title>Staff Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css') }}">
 </head>
-<body>
-<div class="container">
-<h2>Staff Login</h2>
 
-<form method="POST">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="number" name="staff_id" placeholder="Staff ID" required>
-    <input type="password" name="password" placeholder="Password">
+<body class="auth-page">
 
-    <button type="submit">Login</button>
-</form>
-<p>
-    Haven’t set password?
-    <a href="{{ url_for('business.check_staff', slug=business.slug) }}">
-        Set it here
-    </a>
-</p>
+<div class="auth-card">
+
+    <h2>Staff Login</h2>
+    <p class="auth-subtitle">Login to manage your schedule</p>
+
+    <form method="POST" class="auth-form">
+        <input type="email" name="email" placeholder="Enter Email" required>
+        <input type="number" name="staff_id" placeholder="Enter Staff ID" required>
+        <input type="password" name="password" placeholder="Enter Password">
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p class="auth-footer">
+        Haven’t set password?
+        <a href="{{ url_for('business.check_staff', slug=business.slug) }}">
+            Set it here
+        </a>
+    </p>
+
 </div>
-
 
 </body>
 </html>

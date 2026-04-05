@@ -1,142 +1,291 @@
-/* Reset */
-* {
+/* ================= BASE ================= */
+body {
     margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f7f5ef;
 }
 
-/* Body */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f1e9;
+/* ================= STAFF NAVBAR ================= */
+.staff-navbar {
+    height: 60px;
+    background: #1f3d36;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.staff-navbar .nav-left {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.staff-navbar .nav-right a {
+    color: #e6efe9;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.staff-navbar .nav-right a:hover {
+    color: #6fae99;
+}
+
+/* ================= CONTAINER ================= */
+.staff-container {
+    max-width: 1100px;
+    margin: auto;
     padding: 30px;
 }
 
-/* Headings */
-h2 {
-    text-align: center;
-    color: #2f5d50;
+/* ================= HEADINGS ================= */
+.page-title {
+    font-size: 26px;
     margin-bottom: 20px;
 }
 
 h3 {
-    color: #2f5d50;
-    margin: 25px 0 10px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 18px;
 }
 
-/* Form Card */
-form {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    width: 350px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e6e0d6;
-    margin-bottom: 20px;
+/* ================= FORM ================= */
+.slot-form {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: flex-end;
 }
 
-/* Inputs & Select */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
 input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #dcd6cc;
-    border-radius: 8px;
-    font-size: 14px;
-    background: #faf8f4;
-    transition: 0.3s;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    min-width: 200px;
 }
 
-/* Focus */
 input:focus, select:focus {
-    border-color: #6a9c89;
+    border-color: #1f3d36;
     outline: none;
-    box-shadow: 0 0 4px rgba(106, 156, 137, 0.4);
+    box-shadow: 0 0 0 2px rgba(31,61,54,0.15);
 }
 
-/* Button */
-button {
-    padding: 10px 14px;
-    background: #6a9c89;
+/* ================= BUTTON ================= */
+.primary-btn {
+    background: #1f3d36;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
-button:hover {
-    background: #588f7a;
+.primary-btn:hover {
+    background: #162f2a;
 }
 
-/* SLOT CARDS */
+/* ================= SECTION ================= */
+.section {
+    margin-top: 40px;
+}
+
+/* ================= GRID ================= */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* ================= CARD ================= */
 .card {
-    background: #ffffff;
-    border: 1px solid #e6e0d6;
+    background: white;
+    padding: 16px;
     border-radius: 12px;
-    padding: 15px;
-    margin: 10px 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
 
+.card:hover {
+    transform: translateY(-3px);
+}
+
+/* ================= SLOT CARD ================= */
+.slot-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* Available slot */
+/* ================= SLOT COLORS ================= */
 .available {
-    border-left: 6px solid #6a9c89;
+    border-left: 5px solid #6fae99;
 }
 
-/* Booked slot */
 .booked {
-    border-left: 6px solid #c94f4f;
+    border-left: 5px solid #1f3d36;
 }
 
-/* Slot text */
-.card b {
-    color: #2f5d50;
+/* ================= SLOT INFO ================= */
+.slot-info b {
+    font-size: 15px;
 }
 
-/* Action buttons container */
+.slot-info p {
+    margin: 5px 0;
+    color: #6b7280;
+}
+
+/* ================= ACTIONS ================= */
 .actions {
     display: flex;
     gap: 8px;
+    margin-top: 10px;
 }
 
-/* Update button */
+/* ================= BUTTON VARIANTS ================= */
 .update-btn {
-    background: #6a9c89;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 .update-btn:hover {
-    background: #588f7a;
+    background: #1d4ed8;
 }
 
-/* Delete button */
 .delete-btn {
-    background: #c94f4f;
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 .delete-btn:hover {
-    background: #a63d3d;
+    background: #b91c1c;
 }
 
-/* Divider */
-hr {
-    margin: 30px 0;
-    border: none;
-    border-top: 1px solid #e0dbd2;
+/* ================= CUSTOMER ================= */
+.customer {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #374151;
 }
+
+.customer span {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* ================= TOAST ================= */
 .toast {
     position: fixed;
-    top: 20px;
+    bottom: 20px;
     right: 20px;
-    background: #c94f4f;
     color: white;
-    padding: 12px 18px;
+    padding: 12px 20px;
     border-radius: 8px;
     display: none;
+    font-size: 14px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* ================= AUTH PAGE ================= */
+.auth-page {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f7f5ef;
+}
+
+/* ================= AUTH CARD ================= */
+.auth-card {
+    background: white;
+    padding: 40px 30px;
+    width: 360px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+/* ================= AUTH TITLE ================= */
+.auth-card h2 {
+    margin-bottom: 8px;
+    color: #1f3d36;
+}
+
+/* ================= AUTH SUBTITLE ================= */
+.auth-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+/* ================= AUTH FORM ================= */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form input {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.auth-form input:focus {
+    border-color: #1f3d36;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(31,61,54,0.15);
+}
+
+/* ================= AUTH BUTTON ================= */
+.auth-form button {
+    margin-top: 10px;
+    padding: 12px;
+    background: #1f3d36;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.auth-form button:hover {
+    background: #162f2a;
+}
+
+/* ================= AUTH FOOTER ================= */
+.auth-footer {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.auth-footer a {
+    color: #1f3d36;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
 }
