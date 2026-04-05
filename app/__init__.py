@@ -31,7 +31,13 @@ def create_app():
     login_manager.init_app(app)
 
 
-    from app import models
+
+
+    from app import models  
+
+
+    with app.app_context():
+        db.create_all()
 
 
     from app.routes.landing_routes import landing_bp
