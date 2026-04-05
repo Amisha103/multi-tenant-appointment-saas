@@ -3,6 +3,7 @@
 <head>
     <title>Admin Panel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -18,10 +19,9 @@
 
         <a href="{{ url_for('business.admin_staff', slug=business.slug) }}">Staff</a>
 
-        <a href="#">Appointments</a>
-
-        <a href="#">Settings</a>
-
+        <a href="{{ url_for('business.admin_appointments', slug=business.slug) }}">
+    Appointments
+</a>
         <a href="{{ url_for('business.logout', slug=business.slug) }}">Logout</a>
     </div>
 

@@ -1,19 +1,70 @@
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f7f5ef; /* beige */
+    background-color: #f5f7fb;
 }
 
-/* Container */
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.login-card {
+    background: white;
+    padding: 40px;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.login-card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 10px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-card button:hover {
+    background: #4338ca;
+}
+
+.flash {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+
 .admin-container {
     display: flex;
     height: 100vh;
 }
 
-/* Sidebar */
+
 .sidebar {
-    width: 220px;
-    background-color: #1f3d36; /* deep green */
+    width: 230px;
+    background-color: #1f3d36;
     color: white;
     padding: 20px;
     display: flex;
@@ -25,219 +76,253 @@ body {
 }
 
 .sidebar a {
-    color: #e6efe9; /* soft light green */
+    color: #e6efe9;
     text-decoration: none;
     margin-bottom: 15px;
-    transition: color 0.2s ease;
+    font-size: 15px;
+    transition: 0.2s;
 }
 
 .sidebar a:hover {
-    color: #6fae99; /* accent green */
+    color: #6fae99;
 }
 
-/* Main Content */
+
 .main-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111827;
+    color: white;
+    padding: 15px 25px;
+}
+
+.navbar .right a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+.navbar .right a:hover {
+    text-decoration: underline;
+}
+
+
+.content {
     padding: 30px;
-    background-color: #f7f5ef; /* beige */
-}
-     body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .login-card {
-            background: white;
-            padding: 40px;
-            width: 350px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        .flash {
-            color: red;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        
-body{
-font-family:Arial;
-background:#f5f7fb;
-margin:0;
-padding:40px;
-}
-
-.container{
-max-width:1100px;
-margin:auto;
-}
-
-h2{
-text-align:center;
-margin-bottom:30px;
-color:#333;
 }
 
 
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
 
-.services-table{
-width:100%;
-border-collapse:collapse;
-margin-bottom:40px;
-background:white;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.card p {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+
+.services-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .services-table th,
-.services-table td{
-padding:12px;
-border-bottom:1px solid #eee;
-text-align:center;
+.services-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
 }
 
-.services-table th{
-background:#f3f4f6;
+.services-table th {
+    background: #f3f4f6;
 }
 
-input[type="number"]{
-padding:6px;
-width:90px;
-border-radius:6px;
-border:1px solid #ccc;
+
+input[type="number"] {
+    padding: 6px;
+    width: 90px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-.update-btn{
-padding:6px 10px;
-border:none;
-background:#22c55e;
-color:white;
-border-radius:6px;
-cursor:pointer;
+
+.update-btn {
+    padding: 6px 10px;
+    border: none;
+    background: #22c55e;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-.delete-btn{
-padding:6px 10px;
-border:none;
-background:#ef4444;
-color:white;
-border-radius:6px;
-cursor:pointer;
+.delete-btn {
+    padding: 6px 10px;
+    border: none;
+    background: #ef4444;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-/* ADD SERVICES GRID */
 
-.services-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
 }
 
-.service-card{
-background:white;
-border-radius:10px;
-padding:20px;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
-display:flex;
-align-items:center;
-cursor:pointer;
+.service-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 }
 
-.service-card input{
-margin-right:10px;
+.service-card input {
+    margin-right: 10px;
 }
 
-.other-input{
-display:none;
-margin-top:20px;
-text-align:center;
+
+.other-input {
+    display: none;
+    margin-top: 20px;
+    text-align: center;
 }
 
-.other-input input{
-padding:10px;
-width:250px;
-border-radius:6px;
-border:1px solid #ccc;
+.other-input input {
+    padding: 10px;
+    width: 250px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-.submit-btn{
-margin-top:30px;
-display:block;
-width:200px;
-margin-left:auto;
-margin-right:auto;
-padding:12px;
-border:none;
-border-radius:8px;
-background:#4f46e5;
-color:white;
-font-size:16px;
-cursor:pointer;
+
+.submit-btn {
+    margin-top: 30px;
+    display: block;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
 }
- body {
-            margin: 0;
-            font-family: Arial;
-            background: #f5f7fb;
-        }
 
-        /* NAVBAR */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #111827;
-            color: white;
-            padding: 14px 25px;
-        }
+.submit-btn:hover {
+    background: #4338ca;
+}
 
-        .navbar .left {
-            font-size: 18px;
-            font-weight: bold;
-        }
+.charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 30px;
+}
 
-        .navbar .right a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 14px;
-        }
+.chart-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+/* SECTION WRAPPER */
+.section {
+    margin-top: 40px;
+}
 
-        .navbar .right a:hover {
-            text-decoration: underline;
-        }
+/* CARD STYLE */
+.section-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
 
-        /* PAGE CONTENT */
-        .content {
-            padding: 30px;
-        }
+/* TABLE */
+.appointments-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* 🔥 space between rows */
+}
+
+/* HEADER */
+.appointments-table th {
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* ROW */
+.appointments-table td {
+    background: #f9fafb;
+    padding: 16px 15px;
+    text-align: left;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+/* ROUND CORNERS FOR ROWS */
+.appointments-table tr td:first-child {
+    border-left: 1px solid #eee;
+    border-radius: 8px 0 0 8px;
+}
+
+.appointments-table tr td:last-child {
+    border-right: 1px solid #eee;
+    border-radius: 0 8px 8px 0;
+}
+
+/* HOVER EFFECT */
+.appointments-table tr:hover td {
+    background: #f3f4f6;
+}
+
+/* HEADINGS */
+h1 {
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+/* CUSTOMER TEXT */
+small {
+    color: #6b7280;
+}

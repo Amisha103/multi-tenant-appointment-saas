@@ -1,6 +1,60 @@
 {% extends "business/admin/admin_layout.html" %}
 
 {% block content %}
-<h1>Dashboard</h1>
-<p>Welcome to Admin Dashboard</p>
+<div class="cards">
+    <div class="card">
+        <h3>Total Revenue</h3>
+        <p>₹{{ total_revenue }}</p>
+    </div>
+</div>
+
+<div class="charts">
+
+    <div class="chart-box">
+        <h3>Top 5 Services</h3>
+        <canvas id="barChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+        <h3>Revenue Contribution</h3>
+        <canvas id="pieChart"></canvas>
+    </div>
+
+</div>
+<script>
+    const topNames = {{ top_names | tojson }};
+    const topCounts = {{ top_counts | tojson }};
+
+    const revenueNames = {{ revenue_names | tojson }};
+    const revenueValues = {{ revenue_values | tojson }};
+
+    // BAR CHART
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: topNames,
+            datasets: [{
+                label: 'Bookings',
+                data: topCounts
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+    // PIE CHART
+    new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+            labels: revenueNames,
+            datasets: [{
+                data: revenueValues
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
 {% endblock %}

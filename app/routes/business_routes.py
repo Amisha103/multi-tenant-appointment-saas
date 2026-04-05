@@ -29,7 +29,8 @@ from app.models.staff import Staff
 from app.models.business_user import BusinessUser
 from app.models.master_service import MasterService
 from app.extensions import db
-
+from sqlalchemy import func
+from flask import jsonify
 import os
 
 
@@ -131,6 +132,7 @@ def admin_login(slug):
 
 
 
+
 @business_bp.route("/<slug>/admin/dashboard")
 @jwt_required(locations=["cookies"])
 def admin_dashboard(slug):
@@ -145,13 +147,114 @@ def admin_dashboard(slug):
 
     user = User.query.get(user_id)
 
+    # 🔥 TOP 5 SERVICES (BOOKINGS)
+    top_services = (
+        db.session.query(
+            MasterService.name,
+            func.count(Appointment.id)
+        )
+        .join(Service, Appointment.service_id == Service.id)
+        .join(MasterService, Service.master_service_id == MasterService.id)
+        .filter(
+            Appointment.tenant_id == business.id,
+            Appointment.is_booked == True
+        )
+        .group_by(MasterService.name)
+        .order_by(func.count(Appointment.id).desc())
+        .limit(5)
+        .all()
+    )
+
+    # 🔥 REVENUE PER SERVICE
+    service_revenue = (
+        db.session.query(
+            MasterService.name,
+            func.sum(Service.price)
+        )
+        .join(Service, Service.master_service_id == MasterService.id)
+        .join(Appointment, Appointment.service_id == Service.id)
+        .filter(
+            Appointment.tenant_id == business.id,
+            Appointment.is_booked == True
+        )
+        .group_by(MasterService.name)
+        .all()
+    )
+
+    # 💰 TOTAL REVENUE
+    total_revenue = sum([r[1] for r in service_revenue]) if service_revenue else 0
+
+    # ✅ CONVERT FOR CHART.JS
+    top_names = [t[0] for t in top_services]
+    top_counts = [t[1] for t in top_services]
+
+    revenue_names = [r[0] for r in service_revenue]
+    revenue_values = [r[1] for r in service_revenue]
+
     return render_template(
         "business/admin/admin_dashboard.html",
         business=business,
-        user=user
+        user=user,
+        total_revenue=total_revenue,
+        top_names=top_names,
+        top_counts=top_counts,
+        revenue_names=revenue_names,
+        revenue_values=revenue_values
+    )
+@business_bp.route("/<slug>/admin/appointments")
+@jwt_required(locations=["cookies"])
+def admin_appointments(slug):
+
+    business = g.current_business
+
+    claims = get_jwt()
+    if claims["role"] != "admin":
+        abort(403)
+
+    # 🔥 BOOKED APPOINTMENTS
+    booked_appointments = (
+        db.session.query(
+            Appointment,
+            Service,
+            MasterService,
+            Staff
+        )
+        .join(Service, Appointment.service_id == Service.id)
+        .join(MasterService, Service.master_service_id == MasterService.id)
+        .outerjoin(Staff, Appointment.staff_id == Staff.id)
+        .filter(
+            Appointment.tenant_id == business.id,
+            Appointment.is_booked == True
+        )
+        .order_by(Appointment.time.desc())
+        .all()
     )
 
+    # 🔥 AVAILABLE SLOTS
+    available_appointments = (
+        db.session.query(
+            Appointment,
+            Service,
+            MasterService,
+            Staff
+        )
+        .join(Service, Appointment.service_id == Service.id)
+        .join(MasterService, Service.master_service_id == MasterService.id)
+        .outerjoin(Staff, Appointment.staff_id == Staff.id)
+        .filter(
+            Appointment.tenant_id == business.id,
+            Appointment.is_booked == False
+        )
+        .order_by(Appointment.time.desc())
+        .all()
+    )
 
+    return render_template(
+        "business/admin/admin_appointments.html",
+        business=business,
+        booked_appointments=booked_appointments,
+        available_appointments=available_appointments
+    )
 
 @business_bp.route("/<slug>/admin/services", methods=["GET","POST"])
 @jwt_required(locations=["cookies"])

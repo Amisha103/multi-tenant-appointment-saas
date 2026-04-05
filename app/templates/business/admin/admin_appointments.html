@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="content">
+
+    <h1>Appointments Dashboard</h1>
+
+    <!-- BOOKED -->
+    <div class="section">
+        <div class="section-card">
+            <h2>🟢 Booked Appointments</h2>
+
+            <table class="appointments-table">
+                <tr>
+                    <th>Time</th>
+                    <th>Service</th>
+                    <th>Staff</th>
+                    <th>Customer</th>
+                </tr>
+
+                {% for appt, service, master, staff in booked_appointments %}
+                <tr>
+                    <td>{{ appt.time.strftime("%d %b %Y, %I:%M %p") }}</td>
+                    <td>{{ master.name }}</td>
+                    <td>{{ staff.email if staff else "-" }}</td>
+                    <td>
+                        <strong>{{ appt.customer_name }}</strong><br>
+                        <small>{{ appt.customer_email }}</small>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    </div>
+
+    <!-- AVAILABLE -->
+    <div class="section">
+        <div class="section-card">
+            <h2>🟡 Available Slots</h2>
+
+            <table class="appointments-table">
+                <tr>
+                    <th>Time</th>
+                    <th>Service</th>
+                    <th>Staff</th>
+                </tr>
+
+                {% for appt, service, master, staff in available_appointments %}
+                <tr>
+                    <td>{{ appt.time.strftime("%d %b %Y, %I:%M %p") }}</td>
+                    <td>{{ master.name }}</td>
+                    <td>{{ staff.email if staff else "-" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
