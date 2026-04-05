@@ -4,65 +4,100 @@
 
 {% block content %}
 
-<h2>Welcome, {{ user.name }} 👋</h2>
+<div class="user-dashboard">
 
+    <!-- HEADER -->
+    <div class="page-header">
+        <h2>Welcome, {{ user.name }} 👋</h2>
+        <p class="subtitle">Book and manage your appointments</p>
+    </div>
 
-<h3>Available Appointments</h3>
+    <!-- AVAILABLE APPOINTMENTS -->
+    <div class="section-card">
 
-{% if available_slots %}
-    <table>
-        <tr>
-            <th>Time</th>
-            <th>Service</th>
-            <th>Action</th>
-        </tr>
+        <div class="section-header">
+            <h3>Available Appointments</h3>
+        </div>
 
-        {% for slot in available_slots %}
-        <tr>
-            <td>{{ slot.time }}</td>
-        <td>{{ slot.service.master.name }}</td>
-        <td>{{ slot.service.price }}</td>
-            <td>
-                <form method="POST" action="{{ url_for('business.book_slot', slug=business.slug, id=slot.id) }}">
-                    <button type="submit">Book</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>No slots available</p>
-{% endif %}
+        {% if available_slots %}
+        <div class="table-container">
+            <table class="user-table">
 
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Service</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-<br><br>
+                <tbody>
+                    {% for slot in available_slots %}
+                    <tr>
+                        <td>{{ slot.time.strftime("%Y-%m-%d %H:%M") }}</td>
+                        <td>{{ slot.service.master.name }}</td>
+                        <td>₹{{ slot.service.price }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('business.book_slot', slug=business.slug, id=slot.id) }}">
+                                <button class="primary-btn" type="submit">Book</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
 
+            </table>
+        </div>
+        {% else %}
+            <p class="empty-text">No slots available</p>
+        {% endif %}
 
-<h3>My Booked Appointments</h3>
+    </div>
 
-{% if my_appointments %}
-    <table>
-        <tr>
-            <th>Time</th>
-            <th>Service</th>
-            <th>Action</th>
-        </tr>
+    <!-- BOOKED APPOINTMENTS -->
+    <div class="section-card">
 
-        {% for slot in my_appointments %}
-        <tr>
-            <td>{{ slot.time }}</td>
-            <td>{{ slot.service.master.name }}</td>
-        <td>{{ slot.service.price }}</td>
-            <td>
-                <form method="POST" action="{{ url_for('business.cancel_appointment', slug=business.slug, id=slot.id) }}">
-                    <button type="submit" style="background-color:red;">Cancel</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>You have no bookings</p>
-{% endif %}
+        <div class="section-header">
+            <h3>My Booked Appointments</h3>
+        </div>
+
+        {% if my_appointments %}
+        <div class="table-container">
+            <table class="user-table">
+
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Service</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for slot in my_appointments %}
+                    <tr>
+                        <td>{{ slot.time.strftime("%Y-%m-%d %H:%M") }}</td>
+                        <td>{{ slot.service.master.name }}</td>
+                        <td>₹{{ slot.service.price }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('business.cancel_appointment', slug=business.slug, id=slot.id) }}">
+                                <button class="danger-btn" type="submit">Cancel</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+        {% else %}
+            <p class="empty-text">You have no bookings</p>
+        {% endif %}
+
+    </div>
+
+</div>
 
 {% endblock %}

@@ -4,25 +4,32 @@
 
 {% block content %}
 
-<h2>Login to {{ business.name }}</h2>
+<div class="auth-page">
 
-<form method="POST">
+    <div class="auth-card">
 
-    <label>Email</label>
-    <input type="email" name="email" placeholder="Enter your email" required>
+        <h2>Login to {{ business.name }}</h2>
+        <p class="auth-subtitle">Access your appointments and bookings</p>
 
-    <label>Password</label>
-    <input type="password" name="password" placeholder="Enter your password" required>
+        <form method="POST" class="auth-form">
 
-    <button type="submit">Login</button>
+            <input type="email" name="email" placeholder="Enter your email" required>
 
-</form>
+            <input type="password" name="password" placeholder="Enter your password" required>
 
-<p>
-    Don't have an account?
-    <a href="{{ url_for('business.user_signup', slug=business.slug) }}">
-        Signup here
-    </a>
-</p>
+            <button type="submit">Login</button>
+
+        </form>
+
+        <p class="auth-footer">
+            Don't have an account?
+            <a href="{{ url_for('business.user_signup', slug=business.slug) }}">
+                Signup here
+            </a>
+        </p>
+
+    </div>
+
+</div>
 
 {% endblock %}
