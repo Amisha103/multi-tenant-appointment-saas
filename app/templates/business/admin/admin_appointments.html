@@ -1,36 +1,61 @@
-{% extends "base.html" %}
-
+{% extends "business/admin/base_admin.html" %}
 {% block content %}
 
 <div class="content">
 
-    <h1>Appointments Dashboard</h1>
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-title">Appointments Dashboard</div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-title">Booked</div>
+                <div class="stat-value">{{ booked_appointments|length }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Available</div>
+                <div class="stat-value">{{ available_appointments|length }}</div>
+            </div>
+        </div>
+    </div>
 
     <!-- BOOKED -->
     <div class="section">
         <div class="section-card">
-            <h2>🟢 Booked Appointments</h2>
 
-            <table class="appointments-table">
-                <tr>
-                    <th>Time</th>
-                    <th>Service</th>
-                    <th>Staff</th>
-                    <th>Customer</th>
-                </tr>
+            <div class="section-header">
+                <h2>🟢 Booked Appointments</h2>
+            </div>
 
-                {% for appt, service, master, staff in booked_appointments %}
-                <tr>
-                    <td>{{ appt.time.strftime("%d %b %Y, %I:%M %p") }}</td>
-                    <td>{{ master.name }}</td>
-                    <td>{{ staff.email if staff else "-" }}</td>
-                    <td>
-                        <strong>{{ appt.customer_name }}</strong><br>
-                        <small>{{ appt.customer_email }}</small>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
+            <div class="table-container">
+                <table class="appointments-table">
+                    <tr>
+                        <th>Time</th>
+                        <th>Service</th>
+                        <th>Staff</th>
+                        <th>Customer</th>
+                        <th>Status</th>
+                    </tr>
+
+                    {% for appt, service, master, staff in booked_appointments %}
+                    <tr>
+                        <td>{{ appt.time.strftime("%d %b %Y, %I:%M %p") }}</td>
+                        <td>{{ master.name }}</td>
+                        <td>{{ staff.email if staff else "-" }}</td>
+
+                        <td>
+                            <div class="customer-name">{{ appt.customer_name }}</div>
+                            <div class="customer-email">{{ appt.customer_email }}</div>
+                        </td>
+
+                        <td>
+                            <span class="badge badge-booked">Booked</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
 
         </div>
     </div>
@@ -38,23 +63,33 @@
     <!-- AVAILABLE -->
     <div class="section">
         <div class="section-card">
-            <h2>🟡 Available Slots</h2>
 
-            <table class="appointments-table">
-                <tr>
-                    <th>Time</th>
-                    <th>Service</th>
-                    <th>Staff</th>
-                </tr>
+            <div class="section-header">
+                <h2>🟡 Available Slots</h2>
+            </div>
 
-                {% for appt, service, master, staff in available_appointments %}
-                <tr>
-                    <td>{{ appt.time.strftime("%d %b %Y, %I:%M %p") }}</td>
-                    <td>{{ master.name }}</td>
-                    <td>{{ staff.email if staff else "-" }}</td>
-                </tr>
-                {% endfor %}
-            </table>
+            <div class="table-container">
+                <table class="appointments-table">
+                    <tr>
+                        <th>Time</th>
+                        <th>Service</th>
+                        <th>Staff</th>
+                        <th>Status</th>
+                    </tr>
+
+                    {% for appt, service, master, staff in available_appointments %}
+                    <tr>
+                        <td>{{ appt.time.strftime("%d %b %Y, %I:%M %p") }}</td>
+                        <td>{{ master.name }}</td>
+                        <td>{{ staff.email if staff else "-" }}</td>
+
+                        <td>
+                            <span class="badge badge-available">Available</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
 
         </div>
     </div>

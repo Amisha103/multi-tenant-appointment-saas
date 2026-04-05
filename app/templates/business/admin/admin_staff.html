@@ -2,41 +2,58 @@
 
 {% block content %}
 
-<h2>Manage Staff</h2>
+<div class="content">
 
-<!-- ADD STAFF -->
-<form method="POST" style="margin-bottom:30px;">
-    <input type="email" name="email" placeholder="Enter staff email" required>
-    <button type="submit">Add Staff</button>
-</form>
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-title">Staff Management</div>
+    </div>
 
-<!-- STAFF TABLE -->
-<table border="1" cellpadding="10" cellspacing="0" width="100%">
-    <tr>
-        <th>Staff ID</th>
-        <th>Email</th>
-        <th>Name</th>
-        <th>Status</th>
-    </tr>
+    <!-- ADD STAFF -->
+    <div class="card">
+        <h3>Add Staff</h3>
 
-    {% for staff in staff_list %}
-    <tr>
-        <td>{{ staff.staff_id }}</td>
-        <td>{{ staff.email }}</td>
+        <form method="POST" class="form-inline">
+            <input type="email" name="email" placeholder="Enter staff email" required>
+            <button type="submit">Add Staff</button>
+        </form>
+    </div>
 
-        <td>
-            {{ staff.name if staff.name else "Not Set" }}
-        </td>
+    <!-- STAFF TABLE -->
+    <div class="card">
+        <h3>Staff Members</h3>
 
-        <td>
-            {% if staff.password %}
-                Active
-            {% else %}
-                Pending
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+        <table class="staff-table">
+            <tr>
+                <th>Staff ID</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+
+            {% for staff in staff_list %}
+            <tr>
+                <td>{{ staff.staff_id }}</td>
+
+                <td>{{ staff.email }}</td>
+
+                <td>
+                    {{ staff.name if staff.name else "Not Set" }}
+                </td>
+
+                <td>
+                    {% if staff.password %}
+                        <span class="badge badge-active">Active</span>
+                    {% else %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+</div>
 
 {% endblock %}

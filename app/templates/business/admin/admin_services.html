@@ -1,129 +1,100 @@
-
-
 {% extends "business/admin/base_admin.html" %}
 
 {% block content %}
 
-<h2>Manage Services</h2>
+<div class="content">
 
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-title">Service Management</div>
+    </div>
 
+    <!-- EXISTING SERVICES -->
+    <div class="card">
+        <h2>Existing Services</h2>
 
+        {% if services %}
+        <table class="services-table">
+            <tr>
+                <th>Service</th>
+                <th>Price (₹)</th>
+                <th>Duration (min)</th>
+                <th>Actions</th>
+            </tr>
 
-<body>
+            {% for service, master in services %}
+            <tr>
 
-<div class="container">
+                <form method="POST" action="{{ url_for('business.update_service', slug=business.slug, id=service.id) }}">
 
+                <td>{{ master.name }}</td>
 
+                <td>
+                    <input type="number" name="price" value="{{ service.price or '' }}">
+                </td>
 
-<!-- EXISTING SERVICES -->
+                <td>
+                    <input type="number" name="duration" value="{{ service.duration or '' }}">
+                </td>
 
-{% if services %}
+                <td>
+                    <button class="update-btn" type="submit">Update</button>
+                </form>
 
-<table class="services-table">
+                <a href="{{ url_for('business.delete_service', slug=business.slug, id=service.id) }}">
+                    <button class="delete-btn">Delete</button>
+                </a>
 
-<thead>
-<tr>
-<th>Service</th>
-<th>Price (₹)</th>
-<th>Duration (min)</th>
-<th>Actions</th>
-</tr>
-</thead>
+                </td>
 
-<tbody>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>No services added yet</p>
+        {% endif %}
+    </div>
 
-{% for service, master in services %}
+    <!-- ADD SERVICES -->
+    <div class="card">
+        <h2>Add Services</h2>
 
-<tr>
+        <form method="POST" action="{{ url_for('business.save_service', slug=business.slug) }}">
 
-<td>{{ master.name }}</td>
+            <div class="services-grid">
 
-<td>
-<form method="POST" action="{{ url_for('business.update_service', slug=business.slug, id=service.id) }}">
-<input type="number" name="price" value="{{ service.price or '' }}" placeholder="Price">
-</td>
+                {% for service in master_services %}
+                <label class="service-card">
+                    <input type="checkbox" name="services" value="{{ service.id }}">
+                    <span>{{ service.name }}</span>
+                </label>
+                {% endfor %}
 
-<td>
-<input type="number" name="duration" value="{{ service.duration or '' }}" placeholder="Duration">
-</td>
+                <label class="service-card">
+                    <input type="checkbox" id="otherCheck">
+                    <span>Other Service</span>
+                </label>
 
-<td>
+            </div>
 
-<button class="update-btn" type="submit">
-Update
-</button>
+            <div class="other-input" id="otherInput" style="display:none;">
+                <input type="text" name="other_service" placeholder="Enter new service">
+            </div>
 
-</form>
+            <button type="submit" class="submit-btn">Save Services</button>
 
-<a href="{{ url_for('business.delete_service', slug=business.slug, id=service.id) }}">
-<button class="delete-btn">
-Delete
-</button>
-</a>
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-{% endif %}
-
-
-<!-- ADD NEW SERVICES -->
-
-<h2>Add Services</h2>
-
-<form method="POST" action="{{ url_for('business.save_service', slug=business.slug) }}">
-
-<div class="services-grid">
-
-{% for service in master_services %}
-<label class="service-card">
-  <input type="checkbox" name="services" value="{{ service.id }}">
-  <span>{{ service.name }}</span>
-</label>
-{% endfor %}
-
-<!-- OTHER SERVICE OPTION -->
-<label class="service-card">
-  <input type="checkbox" id="otherCheck">
-  <span>Other Service</span>
-</label>
-
-</div>
-
-<div class="other-input" id="otherInput">
-  <input type="text" name="other_service" placeholder="Enter new service">
-</div>
-
-<button type="submit" class="submit-btn">Save Services</button>
-
-</form>
-
-
+        </form>
+    </div>
 
 </div>
 
 <script>
-
-const otherCheck = document.getElementById("otherCheck")
-const otherInput = document.getElementById("otherInput")
+const otherCheck = document.getElementById("otherCheck");
+const otherInput = document.getElementById("otherInput");
 
 otherCheck.addEventListener("change", function(){
-
-if(this.checked){
-otherInput.style.display="block"
-}else{
-otherInput.style.display="none"
-}
-
-})
-
+    otherInput.style.display = this.checked ? "block" : "none";
+});
 </script>
 
 {% endblock %}

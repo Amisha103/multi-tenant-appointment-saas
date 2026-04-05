@@ -13,16 +13,28 @@
     <div class="sidebar">
         <h2>{{ business.name }}</h2>
 
-        <a href="{{ url_for('business.admin_dashboard', slug=business.slug) }}">Dashboard</a>
-
-       <a href="{{ url_for('business.admin_services', slug=business.slug) }}">Services</a>
-
-        <a href="{{ url_for('business.admin_staff', slug=business.slug) }}">Staff</a>
-
-        <a href="{{ url_for('business.admin_appointments', slug=business.slug) }}">
-    Appointments
+        <a class="{% if request.endpoint == 'business.admin_dashboard' %}active{% endif %}"
+   href="{{ url_for('business.admin_dashboard', slug=business.slug) }}">
+   Dashboard
 </a>
-        <a href="{{ url_for('business.logout', slug=business.slug) }}">Logout</a>
+<a class="{% if request.endpoint == 'business.admin_services' %}active{% endif %}"
+   href="{{ url_for('business.admin_services', slug=business.slug) }}">
+   Services
+</a>
+<a class="{% if request.endpoint == 'business.admin_staff' %}active{% endif %}"
+   href="{{ url_for('business.admin_staff', slug=business.slug) }}">
+   Staff
+</a>
+<a class="{% if request.endpoint == 'business.admin_appointments' %}active{% endif %}"
+   href="{{ url_for('business.admin_appointments', slug=business.slug) }}">
+   Appointments
+</a>
+<a class="{% if request.endpoint == 'business.logout' %}active{% endif %}"
+   href="{{ url_for('business.logout', slug=business.slug) }}">
+  Logout
+</a>
+
+      
     </div>
 
     <!-- Main Content -->
