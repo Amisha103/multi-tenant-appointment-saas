@@ -613,6 +613,7 @@ def set_staff_password(slug, id):
 
     return render_template("business/staff/staff_set_password.html", staff=staff)
 
+from sqlalchemy.exc import IntegrityError   # ✅ ADD THIS IMPORT
 
 @business_bp.route("/<slug>/staff/dashboard", methods=["GET", "POST"])
 @jwt_required(locations=["cookies"])
@@ -627,38 +628,42 @@ def staff_dashboard(slug):
     staff = Staff.query.filter_by(id=staff_id, tenant_id=business.id).first_or_404()
 
     services = Service.query.filter_by(
-    tenant_id=business.id
-).all()
+        tenant_id=business.id
+    ).all()
 
-  
     if request.method == "POST":
-        time_str = request.form.get("appointment_time")
-        service_id = request.form.get("service_id")
+        try:   # ✅ ADDED
+            time_str = request.form.get("appointment_time")
+            service_id = request.form.get("service_id")
 
-        
-        time_obj = datetime.fromisoformat(time_str)
+            # ✅ normalize time (prevents hidden mismatch)
+            time_obj = datetime.fromisoformat(time_str).replace(second=0, microsecond=0)
 
-        slot = Appointment(
-            time=time_obj,
-            service_id=service_id,
-            staff_id=staff.id,
-            tenant_id=business.id,
-            is_booked=False
-        )
+            slot = Appointment(
+                time=time_obj,
+                service_id=service_id,
+                staff_id=staff.id,
+                tenant_id=business.id,
+                is_booked=False
+            )
 
-        db.session.add(slot)
-        db.session.commit()
+            db.session.add(slot)
+            db.session.commit()
 
-        flash("Slot created", "success")
+            flash("Slot created", "success")
+
+        except IntegrityError:   # ✅ ADDED
+            db.session.rollback()
+            flash("⚠️ Slot already exists at this time", "error")
+
         return redirect(url_for("business.staff_dashboard", slug=slug))
 
-    # 🔥 GET ALL SLOTS
     now = datetime.now()
 
     appointments = Appointment.query.filter(
-    Appointment.tenant_id == business.id,
-    Appointment.time >= now
-).order_by(Appointment.time).all()
+        Appointment.tenant_id == business.id,
+        Appointment.time >= now
+    ).order_by(Appointment.time).all()
 
     return render_template(
         "business/staff/staff_dashboard.html",
@@ -666,9 +671,8 @@ def staff_dashboard(slug):
         business=business,
         services=services,
         appointments=appointments
-        
     )
-
+from sqlalchemy.exc import IntegrityError   # ✅ ADD THIS IMPORT
 
 @business_bp.route("/<slug>/admin/add-appointment", methods=["GET", "POST"])
 def add_appointment(slug):
@@ -682,35 +686,39 @@ def add_appointment(slug):
     )
 
     if request.method == "POST":
-        time_str = request.form.get("appointment_time")
-        service_id = int(request.form.get("service_id"))  # ✅ FIX TYPE
+        try:   # ✅ ADDED
+            time_str = request.form.get("appointment_time")
+            service_id = int(request.form.get("service_id"))
 
-        appointment_time = datetime.fromisoformat(time_str)
+            appointment_time = datetime.fromisoformat(time_str).replace(second=0, microsecond=0)
 
-        # 🔥 CHECK FOR DUPLICATE SLOT (IMPORTANT)
-        existing_slot = Appointment.query.filter_by(
-            tenant_id=business.id,
-            service_id=service_id,
-            staff_id=staff.id,    
-            time=appointment_time
-        ).first()
+            # ❗ REMOVE staff.id usage (it doesn't exist here)
+            existing_slot = Appointment.query.filter_by(
+                tenant_id=business.id,
+                service_id=service_id,
+                time=appointment_time
+            ).first()
 
-        if existing_slot:
-            flash("Slot already exists for this service at this time", "error")
-            return redirect(url_for("business.add_appointment", slug=slug))
+            if existing_slot:
+                flash("⚠️ Slot already exists for this time", "error")
+                return redirect(url_for("business.add_appointment", slug=slug))
 
-        # ✅ CREATE SLOT
-        new_appt = Appointment(
-            time=appointment_time,
-            service_id=service_id,
-            tenant_id=business.id,
-            is_booked=False
-        )
+            new_appt = Appointment(
+                time=appointment_time,
+                service_id=service_id,
+                tenant_id=business.id,
+                is_booked=False
+            )
 
-        db.session.add(new_appt)
-        db.session.commit()
+            db.session.add(new_appt)
+            db.session.commit()
 
-        flash("Appointment slot added", "success")
+            flash("Appointment slot added", "success")
+
+        except IntegrityError:   # ✅ ADDED
+            db.session.rollback()
+            flash("⚠️ Duplicate slot detected", "error")
+
         return redirect(url_for("business.admin_dashboard", slug=slug))
 
     return render_template(
@@ -718,7 +726,6 @@ def add_appointment(slug):
         services=services,
         business=business
     )
-
 
 @business_bp.route("/<slug>/staff/delete-slot/<int:id>", methods=["POST"])
 @jwt_required(locations=["cookies"])
