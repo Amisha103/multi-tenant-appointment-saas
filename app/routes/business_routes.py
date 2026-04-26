@@ -686,13 +686,12 @@ def add_appointment(slug):
     )
 
     if request.method == "POST":
-        try:   # ✅ ADDED
+        try: 
             time_str = request.form.get("appointment_time")
             service_id = int(request.form.get("service_id"))
 
             appointment_time = datetime.fromisoformat(time_str).replace(second=0, microsecond=0)
 
-            # ❗ REMOVE staff.id usage (it doesn't exist here)
             existing_slot = Appointment.query.filter_by(
                 tenant_id=business.id,
                 service_id=service_id,
@@ -715,7 +714,7 @@ def add_appointment(slug):
 
             flash("Appointment slot added", "success")
 
-        except IntegrityError:   # ✅ ADDED
+        except IntegrityError:   
             db.session.rollback()
             flash("⚠️ Duplicate slot detected", "error")
 
