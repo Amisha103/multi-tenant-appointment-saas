@@ -169,6 +169,3 @@ python app.py
 
 ---
 
-## 📌 Note
-
-This project is built for **learning and demonstrating backend system design concepts**, not as a production-ready SaaS.
