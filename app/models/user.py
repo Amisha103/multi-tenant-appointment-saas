@@ -10,10 +10,30 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(150), nullable=False)
+    google_id = db.Column(db.String(255), unique=True, nullable=True)
+    email = db.Column(
+        db.String(255),
+        unique=True,
+        nullable=False
+    )
 
-    email = db.Column(db.String(150), unique=True, nullable=False, index=True)
 
-    password_hash = db.Column(db.String(255), nullable=False)
+    auth_provider = db.Column(
+    db.String(20),
+    default="local"
+)
+
+    profile_picture = db.Column(
+    db.String(500),
+    nullable=True
+)
+
+    email_verified = db.Column(
+    db.Boolean,
+    default=False
+)
+
+    password_hash = db.Column(db.String(255), nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

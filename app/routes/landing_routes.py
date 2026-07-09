@@ -1,3 +1,5 @@
+import traceback
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from app.extensions import db
 from app.models.business import Business
@@ -5,6 +7,9 @@ from app.models.user import User
 from app.models.business_user import BusinessUser
 from werkzeug.security import generate_password_hash
 import os
+from flask import jsonify
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 landing_bp = Blueprint(
     "landing",
@@ -131,8 +136,62 @@ def register_business():
             print(e)
             flash("Something went wrong. Please try again.", "error")
             return redirect(url_for("landing.register_business"))
+    
+    print(current_app.config["GOOGLE_CLIENT_ID"])
+    return render_template("landingpage/register_business.html",    google_client_id=current_app.config["GOOGLE_CLIENT_ID"])
 
-    return render_template("landingpage/register_business.html")
+@landing_bp.route("/auth/google/verify", methods=["POST"])
+def verify_google():
+
+    data = request.get_json()
+
+    if not data or "credential" not in data:
+        return jsonify({
+            "success": False,
+            "message": "Google credential is missing."
+        }), 400
+
+    credential = data.get("credential")
+
+    try:
+
+        idinfo = id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            current_app.config["GOOGLE_CLIENT_ID"]
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "name": idinfo.get("name"),
+
+            "email": idinfo.get("email"),
+
+            "google_id": idinfo.get("sub"),
+
+            "picture": idinfo.get("picture"),
+
+            "email_verified": idinfo.get("email_verified", False)
+
+        })
+
+    except ValueError:
+
+        return jsonify({
+            "success": False,
+            "message": "Invalid Google token."
+        }), 401
+    
+    except Exception as e:
+
+       traceback.print_exc()
+
+       return jsonify({
+        "success": False,
+        "message": str(e)
+    }), 500
 
 @landing_bp.route("/services")
 def services():

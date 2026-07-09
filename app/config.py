@@ -13,3 +13,4 @@ class Config:
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")

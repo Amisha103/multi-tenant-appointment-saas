@@ -1,62 +1,277 @@
 {% extends "landingpage/base.html" %}
 
 {% block content %}
+
 <section class="form-section">
+
     <h2>Register Your Business</h2>
     <p>Join our platform and start accepting appointments online.</p>
 
-    <form class="business-form" method="POST" action="{{ url_for('landing.register_business') }}">
+    <!-- Google Sign In -->
+    <div class="google-signin-container">
 
-        <div class="form-group">
-            <label for="business_name">Business Name</label>
-            <input type="text" id="business_name" name="business_name" required>
+        <div
+            id="g_id_onload"
+            data-client_id="{{ google_client_id }}"
+            data-context="signup"
+            data-callback="handleGoogleSignup">
         </div>
 
-        <div class="form-group">
-            <label for="owner_name">Owner Name</label>
-            <input type="text" id="owner_name" name="owner_name" required>
+        <div
+            class="g_id_signin"
+            data-type="standard"
+            data-theme="outline"
+            data-size="large"
+            data-shape="pill"
+            data-text="signup_with"
+            data-logo_alignment="left">
         </div>
 
-        <div class="form-group">
-            <label for="email">Business Email</label>
-            <input type="email" id="email" name="email" required>
-        </div>
+    </div>
+
+    <div class="divider">
+        <span>──────── OR ────────</span>
+    </div>
+
+    <form
+        class="business-form"
+        method="POST"
+        action="{{ url_for('landing.register_business') }}">
+
+        <!-- Hidden Fields -->
+
+        <input
+            type="hidden"
+            id="google_id"
+            name="google_id">
+
+        <input
+            type="hidden"
+            id="auth_provider"
+            name="auth_provider"
+            value="local">
+
+        <!-- Business Name -->
 
         <div class="form-group">
-            <label for="password">Create Password</label>
-            <input type="password" id="password" name="password" required minlength="6">
-            <small class="hint">Minimum 6 characters.</small>
+
+            <label>Business Name</label>
+
+            <input
+                type="text"
+                id="business_name"
+                name="business_name"
+                required>
+
         </div>
 
-        <div class="form-group">
-            <label for="phone">Contact Number</label>
-            <input type="text" id="phone" name="phone" required>
-        </div>
+        <!-- Owner -->
 
         <div class="form-group">
-            <label for="gst_number">GST Number</label>
-            <input type="text" id="gst_number" name="gst_number" required>
-            <small class="hint">GST number must be valid and registered.</small>
+
+            <label>Owner Name</label>
+
+            <input
+                type="text"
+                id="owner_name"
+                name="owner_name"
+                required>
+
         </div>
 
-        <div class="form-group">
-            <label for="address">Business Address</label>
-            <textarea id="address" name="address" rows="3" required></textarea>
-        </div>
+        <!-- Email -->
 
         <div class="form-group">
-            <label for="category">Business Category</label>
-            <select id="category" name="category" required>
-                <option value="">Select category</option>
+
+            <label>Business Email</label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                required>
+
+        </div>
+
+        <!-- Password -->
+
+        <div
+            class="form-group"
+            id="password-group">
+
+            <label>Create Password</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                minlength="6">
+
+            <small class="hint">
+                Minimum 6 characters.
+            </small>
+
+        </div>
+
+        <!-- Phone -->
+
+        <div class="form-group">
+
+            <label>Contact Number</label>
+
+            <input
+                type="text"
+                id="phone"
+                name="phone"
+                required>
+
+        </div>
+
+        <!-- GST -->
+
+        <div class="form-group">
+
+            <label>GST Number</label>
+
+            <input
+                type="text"
+                id="gst_number"
+                name="gst_number"
+                required>
+
+            <small class="hint">
+                GST number must be valid.
+            </small>
+
+        </div>
+
+        <!-- Address -->
+
+        <div class="form-group">
+
+            <label>Business Address</label>
+
+            <textarea
+                id="address"
+                name="address"
+                rows="3"
+                required></textarea>
+
+        </div>
+
+        <!-- Category -->
+
+        <div class="form-group">
+
+            <label>Business Category</label>
+
+            <select
+                id="category"
+                name="category"
+                required>
+
+                <option value="">Select Category</option>
                 <option value="healthcare">Healthcare</option>
                 <option value="salon">Salon</option>
                 <option value="fitness">Fitness</option>
                 <option value="education">Education</option>
                 <option value="other">Other</option>
+
             </select>
+
         </div>
 
-        <button type="submit" class="btn-primary">Register Business</button>
+        <button
+            id="registerBtn"
+            type="submit"
+            class="btn-primary">
+
+            Register Business
+
+        </button>
+
     </form>
+
 </section>
+
+<script
+src="https://accounts.google.com/gsi/client"
+async
+defer>
+</script>
+
+<script>
+
+async function handleGoogleSignup(response){
+
+    try{
+
+        const res = await fetch("{{ url_for('landing.verify_google') }}",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                credential:response.credential
+            })
+
+        });
+
+        const data = await res.json();
+
+        if(!res.ok){
+
+            alert(data.message || "Google Sign-In Failed");
+
+            return;
+
+        }
+
+        document.getElementById("owner_name").value = data.name;
+
+        document.getElementById("email").value = data.email;
+
+        document.getElementById("google_id").value = data.google_id;
+
+        document.getElementById("auth_provider").value = "google";
+
+        document
+            .getElementById("owner_name")
+            .setAttribute("readonly",true);
+
+        document
+            .getElementById("email")
+            .setAttribute("readonly",true);
+
+        document
+            .getElementById("password-group")
+            .style.display="none";
+
+        document
+            .getElementById("password")
+            .disabled=true;
+
+        document
+            .getElementById("registerBtn")
+            .focus();
+
+        alert("Google account verified successfully. Please complete the remaining business details.");
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        alert("Unable to verify Google account.");
+
+    }
+
+}
+
+</script>
+
 {% endblock %}
