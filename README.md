@@ -1,163 +1,171 @@
-# Multi-Tenant Appointment Scheduling System
+# Multi-Tenant Appointment Scheduling SaaS
 
-## 👋 About This Project
+## 👋 Overview
 
-This project is a **backend-focused SaaS application** built to practice and demonstrate **real-world system design and database concepts** using Python, Flask, and PostgreSQL.
+This is a **backend-focused SaaS application** for managing appointments across multiple businesses (tenants).
 
-Instead of focusing on UI, the emphasis here is on **how real SaaS products are designed internally** — especially how they handle **multiple businesses (tenants)** safely and efficiently using a single database.
+The system allows different businesses to:
+- Manage services
+- Manage staff
+- Create and manage appointment slots
+- Handle bookings
 
-This repository is meant to reflect the kind of thinking expected from a **backend or platform engineer**.
-
----
-
-## 🤔 What Problem Does This Solve?
-
-Many service-based businesses like salons, clinics, or consultants need a way to:
-
-* Manage staff members
-* Offer multiple services
-* Define working hours and availability
-* Allow customers to book appointments
-
-Building separate systems for each business doesn’t scale. A SaaS solution should allow **many businesses to use the same platform**, without ever seeing each other’s data.
-
-That’s exactly what this project is about.
+The core focus of this project is **multi-tenant architecture, backend design, and data integrity**, rather than frontend/UI.
 
 ---
 
-## 🎯 What This Project Focuses On
+## 🎯 Key Features
 
-This project is intentionally designed to highlight:
-
-* Multi-tenant database design
-* Clean relational schema modeling
-* Data isolation using `tenant_id`
-* Preventing double bookings
-* Transaction-safe operations
-* Scalability and performance thinking
-
-UI, frontend frameworks, and styling are intentionally kept out of scope.
+- Multi-tenant system using a **single database**
+- Role-based authentication (**Admin, Staff, User**) using JWT
+- Service management per business
+- Staff-based appointment slot creation
+- Booking system with conflict prevention
+- Flash/toast messages for user feedback
+- Dockerized setup for easy deployment
 
 ---
 
-## 🏗️ High-Level Architecture
+## 🏗️ Tech Stack
 
-```
-Client (API Consumer)
-        ↓
-Flask REST API
-        ↓
-PostgreSQL (Single Database, Multiple Tenants)
-```
-
-* Backend: Flask (Python)
-* Database: PostgreSQL
-* ORM: SQLAlchemy (with raw SQL where needed)
-* Architecture style: Monolithic (by design, for clarity)
+- **Backend:** Flask (Python)
+- **Database:** PostgreSQL (Render - cloud hosted)
+- **ORM:** SQLAlchemy
+- **Authentication:** Flask-JWT-Extended (cookies)
+- **Containerization:** Docker + Docker Compose
+- **Frontend:** Basic HTML + CSS (minimal UI)
 
 ---
 
-## 🧩 How Multi-Tenancy Works Here
+## 🧠 Multi-Tenancy Design
 
-Each business is treated as a **tenant**.
+This project uses a **shared database, shared schema** approach.
 
-Instead of separate databases per business, this system uses:
+### How it works:
+- Every table includes a `tenant_id`
+- All queries are filtered by `tenant_id`
+- Each business only accesses its own data
 
-**One database + one schema + a `tenant_id` column in every table**
-
-### Data Isolation Rules
-
-* Every table includes `tenant_id`
-* Every query is scoped by `tenant_id`
-* Indexes are optimized for tenant-based access
-* Foreign keys ensure tenant-level consistency
-
-This is a widely used approach in real SaaS products because it balances **cost, scalability, and maintainability**.
+### Why this approach:
+- Cost-efficient
+- Scalable for multiple tenants
+- Common in real SaaS products
 
 ---
 
-## 🗄️ Database Design Overview
+## 🗄️ Database Models (Simplified)
 
-The database is designed first, before writing APIs.
-
-### Core Tables
-
-* `tenants` – represents a business
-* `users` – owners, staff, and customers
-* `services` – services offered by a tenant
-* `staff` – staff members linked to users
-* `availability` – staff working hours
-* `appointments` – booked time slots
-
-### Design Principles
-
-* UUIDs as primary keys
-* Strong foreign key relationships
-* Constraints to enforce data integrity
-* Indexes to support scale
+- **Tenant** → represents a business
+- **User** → authentication & roles
+- **Staff** → staff members
+- **Service** → services offered by tenant
+- **MasterService** → global service list
+- **Appointment** → slots (available / booked)
 
 ---
 
-## ⏱️ Appointment Booking Flow
+## ⏱️ Appointment Flow
 
-When an appointment is booked:
+### Slot Creation (Staff)
+1. Select date & time
+2. Select service
+3. System checks for duplicate slot
+4. Slot is created
 
-1. The tenant and staff are validated
-2. Staff availability is checked
-3. Existing appointments are checked for overlap
-4. The booking is created inside a database transaction
-
-This ensures:
-
-* No double booking
-* Safe concurrent requests
-* Consistent data even under load
-
+### Booking (User)
+1. Select available slot
+2. System verifies availability
+3. Slot is booked
 
 ---
 
-## 🚀 Running the Project Locally
+## 🔒 Data Integrity
 
-### Requirements
+- Duplicate slots prevented using:
+  ```
+  (tenant_id, staff_id, service_id, time)
+  ```
+- Validation done at:
+  - Application level (manual check)
+  - Database level (unique constraint)
 
-* Python 3.10+
-* PostgreSQL
-* Virtual environment (recommended)
+---
 
-### Setup
+## 🐳 Running with Docker (Recommended)
+
+### Start the app
 
 ```bash
-git clone <repo-url>
-cd multi-tenant-appointment-saas
+docker-compose up --build
+```
 
+### Open in browser
+
+```
+http://localhost:5000
+```
+
+### Stop the app
+
+```bash
+docker-compose down
+```
+
+---
+
+## 💻 Running Without Docker
+
+```bash
 python -m venv venv
 source venv/bin/activate
 
 pip install -r requirements.txt
+python app.py
 ```
 
-Database setup and schema evolution are documented inside the `database/` folder.
+---
+
+## 🔐 Roles
+
+- **Admin**
+  - Manage services
+
+- **Staff**
+  - Create/manage slots
+
+- **User**
+  - Book appointments
 
 ---
 
-## 🧠 Why This Project Is Interview-Friendly
+## 🚧 Limitations
 
-This repository makes it easy to explain:
-
-* How multi-tenant SaaS systems work
-* Why `tenant_id` based isolation is used
-* How databases help prevent race conditions
-* How appointment conflicts are avoided
-* How the system can scale to thousands of businesses
+- Minimal UI (not frontend-focused)
+- No payments/subscriptions
+- No background jobs
+- No caching (Redis not added yet)
+- No API documentation
 
 ---
 
-## 🔮 Possible Future Improvements
+## 🚀 Future Improvements
 
-* Role-based access control (RBAC)
-* Payments and subscriptions
-* Audit logging
-* Database partitioning
-* Caching with Redis
+- Redis (caching & slot locking)
+- Kafka / Celery (async processing)
+- Better RBAC system
+- API-first architecture
+- Nginx + Gunicorn setup
+- Rate limiting
 
 ---
+
+## 🧠 What This Project Demonstrates
+
+- Multi-tenant backend design
+- Database constraints & integrity
+- Handling duplicate bookings
+- Docker-based development workflow
+- JWT authentication system
+
+---
+
