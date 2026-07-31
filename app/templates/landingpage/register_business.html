@@ -14,7 +14,8 @@
             id="g_id_onload"
             data-client_id="{{ google_client_id }}"
             data-context="signup"
-            data-callback="handleGoogleSignup">
+            data-callback="handleGoogleSignup"
+            data-auto_prompt="false">
         </div>
 
         <div
@@ -65,7 +66,7 @@
 
         </div>
 
-        <!-- Owner -->
+        <!-- Owner Name -->
 
         <div class="form-group">
 
@@ -105,7 +106,8 @@
                 type="password"
                 id="password"
                 name="password"
-                minlength="6">
+                minlength="6"
+                required>
 
             <small class="hint">
                 Minimum 6 characters.
@@ -206,23 +208,25 @@ async function handleGoogleSignup(response){
 
     try{
 
-        const res = await fetch("{{ url_for('landing.verify_google') }}",{
+        const res = await fetch("{{ url_for('landing.verify_google') }}", {
 
-            method:"POST",
+            method: "POST",
 
-            headers:{
-                "Content-Type":"application/json"
+            headers: {
+                "Content-Type": "application/json"
             },
 
-            body:JSON.stringify({
-                credential:response.credential
+            body: JSON.stringify({
+                credential: response.credential
             })
 
         });
 
         const data = await res.json();
 
-        if(!res.ok){
+        console.log("Google Response:", data);
+
+        if (!res.ok || !data.success){
 
             alert(data.message || "Google Sign-In Failed");
 
@@ -230,35 +234,37 @@ async function handleGoogleSignup(response){
 
         }
 
-        document.getElementById("owner_name").value = data.name;
+        // Fill Google details
 
+        document.getElementById("owner_name").value = data.name;
         document.getElementById("email").value = data.email;
 
-        document.getElementById("google_id").value = data.google_id;
+        // Hidden fields
 
+        document.getElementById("google_id").value = data.google_id;
         document.getElementById("auth_provider").value = "google";
 
-        document
-            .getElementById("owner_name")
-            .setAttribute("readonly",true);
+        // Make fields readonly
 
-        document
-            .getElementById("email")
-            .setAttribute("readonly",true);
+        document.getElementById("owner_name").readOnly = true;
+        document.getElementById("email").readOnly = true;
 
-        document
-            .getElementById("password-group")
-            .style.display="none";
+        // Hide password section
 
-        document
-            .getElementById("password")
-            .disabled=true;
+        document.getElementById("password-group").style.display = "none";
 
-        document
-            .getElementById("registerBtn")
-            .focus();
+        // Disable password
 
-        alert("Google account verified successfully. Please complete the remaining business details.");
+        document.getElementById("password").disabled = true;
+        document.getElementById("password").required = false;
+
+        // Focus next field
+
+        document.getElementById("business_name").focus();
+
+        alert(
+            "Google account verified successfully.\n\nPlease complete the remaining business details."
+        );
 
     }
 

@@ -45,12 +45,14 @@ def home():
     )
 
     
-
-
 @landing_bp.route("/register-business", methods=["GET", "POST"])
 def register_business():
+
     if request.method == "POST":
 
+        # -------------------------
+        # Form Data
+        # -------------------------
         name = request.form.get("business_name")
         owner_name = request.form.get("owner_name")
         email = request.form.get("email")
@@ -58,31 +60,34 @@ def register_business():
         gst_number = request.form.get("gst_number")
         address = request.form.get("address")
         category = request.form.get("category")
+
         password = request.form.get("password")
+
+        google_id = request.form.get("google_id")
+        auth_provider = request.form.get("auth_provider", "local")
+        profile_picture = request.form.get("profile_picture")
 
         # -------------------------
         # Validation Checks
         # -------------------------
 
-        existing_gst = Business.query.filter_by(gst_number=gst_number).first()
-        if existing_gst:
+        if Business.query.filter_by(gst_number=gst_number).first():
             flash("GST number already registered.", "error")
             return redirect(url_for("landing.register_business"))
 
-        existing_business_email = Business.query.filter_by(email=email).first()
-        if existing_business_email:
+        if Business.query.filter_by(email=email).first():
             flash("Business email already registered.", "error")
             return redirect(url_for("landing.register_business"))
 
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
+        if User.query.filter_by(email=email).first():
             flash("User with this email already exists.", "error")
             return redirect(url_for("landing.register_business"))
 
         try:
-            # -------------------------
+
+            # ==================================================
             # 1️⃣ Create Business
-            # -------------------------
+            # ==================================================
             new_business = Business(
                 name=name,
                 owner_name=owner_name,
@@ -95,26 +100,36 @@ def register_business():
             )
 
             db.session.add(new_business)
-            db.session.flush()  # Get business ID without committing
 
+            # Generate Business ID
+            db.session.flush()
 
-            # -------------------------
+            # ==================================================
             # 2️⃣ Create Owner User
-            # -------------------------
-            owner_user = User(
-            name=owner_name,
-            email=email
-             )
+            # ==================================================
 
-            owner_user.set_password(password)
+            owner_user = User(
+                name=owner_name,
+                email=email,
+                google_id=google_id if auth_provider == "google" else None,
+                auth_provider=auth_provider,
+                email_verified=True if auth_provider == "google" else False,
+                profile_picture=profile_picture
+            )
+
+            # Set password ONLY for local signup
+            if auth_provider == "local":
+                owner_user.set_password(password)
 
             db.session.add(owner_user)
-            db.session.flush()  # Get user ID
 
+            # Generate User ID
+            db.session.flush()
 
-            # -------------------------
-            # 3️⃣ Link User to Business
-            # -------------------------
+            # ==================================================
+            # 3️⃣ Link User & Business
+            # ==================================================
+
             business_user = BusinessUser(
                 user_id=owner_user.id,
                 business_id=new_business.id,
@@ -123,23 +138,38 @@ def register_business():
 
             db.session.add(business_user)
 
-            # -------------------------
-            # 4️⃣ Commit Everything
-            # -------------------------
+            # ==================================================
+            # 4️⃣ Save Everything
+            # ==================================================
+
             db.session.commit()
 
-            flash("Business registered successfully! Owner account created.", "success")
+            flash(
+                "Business registered successfully! Owner account created.",
+                "success"
+            )
+
             return redirect(url_for("landing.home"))
 
         except Exception as e:
-            db.session.rollback()
-            print(e)
-            flash("Something went wrong. Please try again.", "error")
-            return redirect(url_for("landing.register_business"))
-    
-    print(current_app.config["GOOGLE_CLIENT_ID"])
-    return render_template("landingpage/register_business.html",    google_client_id=current_app.config["GOOGLE_CLIENT_ID"])
 
+            db.session.rollback()
+
+            print(e)
+
+            flash(
+                "Something went wrong. Please try again.",
+                "error"
+            )
+
+            return redirect(url_for("landing.register_business"))
+
+    print(current_app.config["GOOGLE_CLIENT_ID"])
+
+    return render_template(
+        "landingpage/register_business.html",
+        google_client_id=current_app.config["GOOGLE_CLIENT_ID"]
+    )
 @landing_bp.route("/auth/google/verify", methods=["POST"])
 def verify_google():
 
