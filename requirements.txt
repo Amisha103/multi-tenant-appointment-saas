@@ -8,3 +8,6 @@ python-dotenv==1.0.1
 python-slugify==8.0.4
 gunicorn==21.2.0
 email-validator==2.1.0.post1
+google-auth
+google-auth-oauthlib
+google-api-python-client
