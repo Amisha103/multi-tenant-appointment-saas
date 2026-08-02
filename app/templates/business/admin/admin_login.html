@@ -20,12 +20,20 @@
             </div>
         {% endif %}
     {% endwith %}
+   <form method="POST">
+    <input type="email" name="email" placeholder="Enter Email" required>
+    <input type="password" name="password" placeholder="Enter Password" required>
 
-    <form method="POST">
-        <input type="email" name="email" placeholder="Enter Email" required>
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <button type="submit">Login</button>
-    </form>
+    <button type="submit">Login</button>
+</form>
+
+<hr>
+
+<a href="{{ url_for('business.admin_google_login', slug=business.slug) }}">
+    <button type="button">
+        Continue with Google
+    </button>
+</a>
 
 </div>
 

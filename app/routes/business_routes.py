@@ -32,7 +32,7 @@ from app.extensions import db
 from sqlalchemy import func
 from flask import jsonify
 import os
-
+from app.extensions import oauth
 
 business_bp = Blueprint(
     "business",
@@ -84,7 +84,6 @@ def business_home(slug):
     )
 
 
-
 @business_bp.route("/<slug>/admin/login", methods=["GET", "POST"])
 def admin_login(slug):
 
@@ -97,41 +96,132 @@ def admin_login(slug):
 
         user = User.query.filter_by(email=email).first()
 
-        if user and user.check_password(password):
+        if not user or not user.check_password(password):
+            flash("Invalid email or password.", "error")
 
-            business_user = BusinessUser.query.filter_by(
-                user_id=user.id,
-                business_id=business.id,
-                role="admin"
-            ).first()
+            return render_template(
+                "business/admin/admin_login.html",
+                business=business
+            )
 
-            if business_user:
+        business_user = BusinessUser.query.filter_by(
+            user_id=user.id,
+            business_id=business.id,
+            role="admin"
+        ).first()
 
-                access_token = create_access_token(
-                    identity=str(user.id),
-                    additional_claims={
-                        "business_id": business.id,
-                        "role":"admin"
-                    }
-                )
+        if not business_user:
+            flash("You are not authorized to access this business.", "error")
 
-                response = make_response(
-                    redirect(url_for("business.admin_dashboard", slug=slug))
-                )
+            return render_template(
+                "business/admin/admin_login.html",
+                business=business
+            )
 
-                set_access_cookies(response, access_token)
-
-                return response
-
-        flash("Invalid credentials or unauthorized access", "error")
+        return login_admin_user(user, business, slug)
 
     return render_template(
         "business/admin/admin_login.html",
         business=business
     )
+@business_bp.route("/<slug>/admin/google")
+def admin_google_login(slug):
 
+    redirect_uri = url_for(
+        "business.admin_google_callback",
+        slug=slug,
+        _external=True
+    )
 
+    return oauth.google.authorize_redirect(redirect_uri)
 
+@business_bp.route("/<slug>/admin/google/callback")
+def admin_google_callback(slug):
+
+    business = g.current_business
+
+    try:
+
+        token = oauth.google.authorize_access_token()
+
+        user_info = token["userinfo"]
+
+        email = user_info["email"]
+
+    except Exception:
+
+        flash("Google authentication failed.", "error")
+
+        return redirect(
+            url_for(
+                "business.admin_login",
+                slug=slug
+            )
+        )
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+
+        flash(
+            "No account exists with this Google email.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "business.admin_login",
+                slug=slug
+            )
+        )
+
+    business_user = BusinessUser.query.filter_by(
+        user_id=user.id,
+        business_id=business.id,
+        role="admin"
+    ).first()
+
+    if not business_user:
+
+        flash(
+            "You are not an admin for this business.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "business.admin_login",
+                slug=slug
+            )
+        )
+
+    return login_admin_user(user, business, slug)
+
+def login_admin_user(user, business, slug):
+    """
+    Creates JWT for admin, sets cookie and redirects to dashboard.
+    """
+
+    access_token = create_access_token(
+        identity=str(user.id),
+        additional_claims={
+            "business_id": business.id,
+            "role": "admin"
+        }
+    )
+
+    response = make_response(
+        redirect(
+            url_for(
+                "business.admin_dashboard",
+                slug=slug
+            )
+        )
+    )
+
+    set_access_cookies(response, access_token)
+
+    return response
 
 @business_bp.route("/<slug>/admin/dashboard")
 @jwt_required(locations=["cookies"])
@@ -201,6 +291,7 @@ def admin_dashboard(slug):
         revenue_names=revenue_names,
         revenue_values=revenue_values
     )
+
 @business_bp.route("/<slug>/admin/appointments")
 @jwt_required(locations=["cookies"])
 def admin_appointments(slug):
